@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KROJ — Dizajner kuhinje</title>
+<style>
+  :root{
+    --paper:#EDEAE2;
+    --card:#FFFFFF;
+    --ink:#211D18;
+    --ink-soft:#57524A;
+    --line:#D8D3C6;
+    --line-strong:#BDB6A4;
+    --wood:#A8662E;
+    --wood-dark:#8A5023;
+    --blue:#2B4C6F;
+    --blue-soft:#7C93A8;
+    --green:#4C7A52;
+    --red:#A13D2E;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --serif: Georgia, "Times New Roman", serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);}
+  body{min-height:100vh;}
+  ::selection{background:var(--wood);color:#fff;}
+
+  /* ---------- Top bar ---------- */
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;background:var(--ink);color:var(--paper);
+    border-bottom:3px solid var(--wood);
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;}
+  .brand .mark{
+    font-family:var(--serif);font-weight:700;font-size:22px;letter-spacing:0.5px;
+    color:#fff;
+  }
+  .brand .mark span{color:var(--wood);}
+  .brand .sub{font-size:11px;color:#B9B2A2;font-family:var(--mono);letter-spacing:0.5px;}
+  .topbtns{display:flex;gap:8px;flex-wrap:wrap;}
+  .topbtns button{
+    background:transparent;border:1px solid #55503fb0;color:#EDEAE2;
+    padding:7px 12px;font-size:12px;border-radius:3px;cursor:pointer;font-family:var(--mono);
+    transition:.15s;
+  }
+  .topbtns button:hover{background:#3a352c;border-color:var(--wood);}
+
+  /* ---------- Layout shell ---------- */
+  .shell{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 64px);}
+  aside{
+    background:var(--card);border-right:1px solid var(--line);
+    padding:18px 16px 40px;overflow-y:auto;max-height:calc(100vh - 64px);
+  }
+  main{padding:18px 24px 60px;overflow-x:auto;}
+
+  h2.section-title{
+    font-family:var(--serif);font-size:15px;text-transform:uppercase;letter-spacing:1px;
+    color:var(--wood-dark);margin:22px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px;
+  }
+  h2.section-title:first-child{margin-top:0;}
+
+  label{display:block;font-size:11px;color:var(--ink-soft);margin:9px 0 3px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.4px;}
+  select,input[type=text],input[type=number]{
+    width:100%;padding:7px 8px;border:1px solid var(--line-strong);border-radius:3px;
+    font-family:var(--mono);font-size:13px;background:#FCFBF8;color:var(--ink);
+  }
+  select:focus,input:focus{outline:none;border-color:var(--wood);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .checkrow{display:flex;align-items:center;gap:7px;margin-top:10px;}
+  .checkrow input{width:auto;}
+  .checkrow label{margin:0;text-transform:none;letter-spacing:0;font-size:12.5px;}
+
+  button.primary{
+    width:100%;margin-top:14px;background:var(--wood);color:#fff;border:none;
+    padding:10px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.3px;
+  }
+  button.primary:hover{background:var(--wood-dark);}
+  button.ghost{
+    background:transparent;border:1px solid var(--line-strong);color:var(--ink);
+    padding:6px 10px;border-radius:3px;font-size:11.5px;cursor:pointer;font-family:var(--mono);
+  }
+  button.ghost:hover{border-color:var(--wood);color:var(--wood-dark);}
+  button.tiny{
+    background:transparent;border:1px solid var(--line);color:var(--ink-soft);
+    padding:2px 6px;border-radius:3px;font-size:11px;cursor:pointer;line-height:1.4;
+  }
+  button.tiny:hover{border-color:var(--red);color:var(--red);}
+  button.tiny.edit:hover{border-color:var(--blue);color:var(--blue);}
+
+  /* wall selector */
+  .wall-select{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;}
+  .wall-chip{
+    padding:5px 10px;border:1px solid var(--line-strong);border-radius:14px;font-size:11.5px;
+    cursor:pointer;font-family:var(--mono);background:#fff;
+  }
+  .wall-chip.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+
+  /* cabinet list */
+  .cab-item{
+    border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin-bottom:6px;
+    background:#FCFBF8;display:flex;align-items:center;justify-content:space-between;gap:6px;
+  }
+  .cab-item .info{font-size:12px;}
+  .cab-item .info b{font-family:var(--mono);color:var(--wood-dark);}
+  .cab-item .info .d{color:var(--ink-soft);font-family:var(--mono);font-size:11px;}
+  .cab-item .acts{display:flex;gap:4px;flex-shrink:0;}
+
+  /* ---------- Tabs ---------- */
+  .tabs{display:flex;gap:2px;margin-bottom:18px;border-bottom:2px solid var(--line-strong);}
+  .tab{
+    padding:10px 18px;cursor:pointer;font-family:var(--mono);font-size:12.5px;
+    color:var(--ink-soft);border-bottom:2px solid transparent;margin-bottom:-2px;
+    text-transform:uppercase;letter-spacing:.5px;
+  }
+  .tab.active{color:var(--wood-dark);border-bottom-color:var(--wood);font-weight:700;}
+  .tabpanel{display:none;}
+  .tabpanel.active{display:block;}
+
+  /* ---------- Layout / raspored ---------- */
+  .wall-title{font-family:var(--serif);font-size:19px;margin-bottom:4px;}
+  .wall-meta{font-family:var(--mono);font-size:12px;color:var(--ink-soft);margin-bottom:16px;}
+  .floorstrip{
+    background:#fff;border:1px solid var(--line-strong);border-radius:6px;padding:30px 20px 46px;
+    position:relative;min-height:230px;overflow-x:auto;
+  }
+  .floorrow{display:flex;align-items:flex-end;gap:2px;min-width:max-content;}
+  .cabblock{
+    position:relative;border:1.5px solid var(--blue);background:#EFF3F6;
+    display:flex;align-items:flex-end;justify-content:center;cursor:grab;
+    border-radius:2px 2px 0 0;
+  }
+  .cabblock.wall-type{background:#F6F0E8;border-color:var(--wood);}
+  .cabblock .lbl{
+    font-family:var(--mono);font-size:10.5px;color:var(--ink);text-align:center;
+    padding-bottom:4px;pointer-events:none;user-select:none;
+  }
+  .cabblock .dim-top{
+    position:absolute;top:-20px;left:0;right:0;text-align:center;font-family:var(--mono);
+    font-size:10px;color:var(--blue);pointer-events:none;
+  }
+  .cabblock.dragging{opacity:.4;}
+  .cabblock .doorlines{position:absolute;inset:4px;display:flex;gap:1px;pointer-events:none;}
+  .cabblock .doorlines div{flex:1;border-left:1px solid var(--line-strong);}
+  .cabblock .doorlines div:first-child{border-left:none;}
+  .baseline{border-top:2px solid var(--ink);margin-top:0;}
+
+  .empty-note{color:var(--ink-soft);font-size:13px;padding:30px;text-align:center;font-style:italic;}
+
+  /* ---------- Table (krojna lista) ---------- */
+  .mat-group{margin-bottom:26px;}
+  .mat-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    background:var(--ink);color:#fff;padding:8px 14px;border-radius:4px 4px 0 0;
+  }
+  .mat-head .mname{font-family:var(--serif);font-size:15px;}
+  .mat-head .msum{font-family:var(--mono);font-size:11.5px;color:#C9C2B0;}
+  table.cutlist{width:100%;border-collapse:collapse;background:#fff;}
+  table.cutlist th{
+    text-align:left;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+    color:var(--ink-soft);border-bottom:1px solid var(--line-strong);padding:8px 10px;letter-spacing:.4px;
+  }
+  table.cutlist td{
+    padding:7px 10px;font-size:12.5px;border-bottom:1px solid var(--line);font-family:var(--mono);
+  }
+  table.cutlist tr:hover td{background:#FAF8F3;}
+  table.cutlist td.name{font-family:var(--sans);}
+  .totals-row{background:#F6F3EC !important;font-weight:700;}
+  .toolbar{display:flex;gap:8px;margin-bottom:16px;}
+
+  /* ---------- Hardware (okov) ---------- */
+  .hw-summary{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;}
+  .hw-card{
+    background:#fff;border:1px solid var(--line-strong);border-radius:6px;padding:12px 16px;
+    min-width:140px;flex:1;
+  }
+  .hw-card .hw-num{font-family:var(--serif);font-size:26px;color:var(--wood-dark);}
+  .hw-card .hw-lbl{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;color:var(--ink-soft);letter-spacing:.4px;margin-top:2px;}
+  table.hwtbl{width:100%;border-collapse:collapse;background:#fff;margin-bottom:10px;}
+  table.hwtbl th{text-align:left;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;color:var(--ink-soft);border-bottom:1px solid var(--line-strong);padding:7px 10px;}
+  table.hwtbl td{padding:6px 10px;font-size:12.5px;border-bottom:1px solid var(--line);font-family:var(--mono);}
+  table.hwtbl td.name{font-family:var(--sans);}
+  table.hwtbl tr.totals-row td{font-weight:700;background:#F6F3EC;}
+
+  /* ---------- Assembly (sklapanje) ---------- */
+  .asm-card{border:1px solid var(--line-strong);border-radius:6px;background:#fff;padding:16px;margin-bottom:22px;}
+  .asm-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+  .asm-head b{font-family:var(--serif);font-size:16px;}
+  .asm-head .meta{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);}
+  .asm-flex{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;}
+  .asm-svgbox{border:1px solid var(--line);border-radius:4px;background:#FCFBF8;flex-shrink:0;}
+  .asm-legend{flex:1;min-width:260px;}
+  table.legendtbl{width:100%;border-collapse:collapse;margin-bottom:12px;}
+  table.legendtbl th{text-align:left;font-family:var(--mono);font-size:10px;text-transform:uppercase;color:var(--ink-soft);border-bottom:1px solid var(--line-strong);padding:4px 6px;}
+  table.legendtbl td{padding:4px 6px;font-size:12px;border-bottom:1px solid var(--line);font-family:var(--mono);}
+  table.legendtbl td.num{width:22px;}
+  .numchip{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-size:10px;font-family:var(--mono);}
+  .asm-steps{font-size:12.5px;line-height:1.6;color:var(--ink);}
+  .asm-steps .step{margin-bottom:3px;}
+
+  /* ---------- Nesting ---------- */
+  .sheet-wrap{margin-bottom:30px;}
+  .sheet-info{display:flex;gap:18px;align-items:baseline;margin-bottom:8px;flex-wrap:wrap;}
+  .sheet-info b{font-family:var(--serif);font-size:16px;}
+  .util-badge{
+    font-family:var(--mono);font-size:11.5px;padding:3px 9px;border-radius:12px;color:#fff;
+  }
+  .sheets-row{display:flex;gap:16px;flex-wrap:wrap;}
+  .sheet-svg-box{border:1px solid var(--line-strong);background:#fff;border-radius:4px;padding:8px;}
+  .sheet-svg-box .stitle{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);margin-bottom:4px;text-align:center;}
+
+  /* ---------- Materials tab ---------- */
+  table.mattbl{width:100%;border-collapse:collapse;background:#fff;}
+  table.mattbl th{text-align:left;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;color:var(--ink-soft);border-bottom:1px solid var(--line-strong);padding:8px;}
+  table.mattbl td{padding:5px 8px;border-bottom:1px solid var(--line);}
+  table.mattbl input{padding:5px 6px;font-size:12px;}
+  table.mattbl input[type=checkbox]{width:auto;}
+
+  .settings-box{max-width:460px;}
+  .settings-box .field{margin-bottom:14px;}
+  .hint{font-size:11.5px;color:var(--ink-soft);margin-top:4px;line-height:1.4;}
+
+  footer.disclaimer{
+    margin-top:40px;padding:14px 18px;border-left:3px solid var(--wood);background:#F6F0E8;
+    font-size:12px;color:var(--ink-soft);line-height:1.5;max-width:760px;
+  }
+
+  @media print{
+    header,aside,.tabs,.toolbar,.topbtns{display:none !important;}
+    .shell{grid-template-columns:1fr;}
+    body{background:#fff;}
+    .tabpanel{display:none !important;}
+    .tabpanel.print-active{display:block !important;}
+  }
+
+  @media (max-width: 880px){
+    .shell{grid-template-columns:1fr;}
+    aside{max-height:none;border-right:none;border-bottom:1px solid var(--line);}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="mark">KROJ<span>·</span></div>
+    <div class="sub">DIZAJNER KUHINJE — KROJNA LISTA</div>
+  </div>
+  <div class="topbtns">
+    <button id="btnSave">💾 Sačuvaj (JSON)</button>
+    <button id="btnLoad">📂 Učitaj (JSON)</button>
+    <input type="file" id="fileLoad" accept=".json" style="display:none;">
+    <button id="btnReset">🗑 Novi projekat</button>
+  </div>
+</header>
+
+<div class="shell">
+  <aside>
+    <h2 class="section-title">Zid / red elemenata</h2>
+    <div class="wall-select" id="wallSelect"></div>
+    <div style="display:flex;gap:6px;">
+      <button class="ghost" id="btnAddWall" style="flex:1;">+ Novi zid</button>
+      <button class="ghost" id="btnRenWall">Preimenuj</button>
+      <button class="ghost" id="btnDelWall">Obriši</button>
+    </div>
+
+    <h2 class="section-title">Dodaj element</h2>
+    <label>Tip ormarića</label>
+    <select id="f_type">
+      <option value="base">Bazni (donji)</option>
+      <option value="wall">Viseći (gornji)</option>
+      <option value="tall">Visoki (stubac)</option>
+      <option value="drawers">Ladičar (komoda za fioke)</option>
+      <option value="openshelf">Otvorena viseća polica</option>
+    </select>
+
+    <label>Naziv / oznaka</label>
+    <input type="text" id="f_name" placeholder="npr. D1">
+
+    <div class="row3">
+      <div><label>Širina (mm)</label><input type="number" id="f_w" value="600"></div>
+      <div><label>Visina (mm)</label><input type="number" id="f_h" value="820"></div>
+      <div><label>Dubina (mm)</label><input type="number" id="f_d" value="560"></div>
+    </div>
+
+    <div class="row2">
+      <div><label>Broj vrata</label><input type="number" id="f_doors" value="1" min="0"></div>
+      <div><label>Broj fioka</label><input type="number" id="f_drawers" value="0" min="0"></div>
+    </div>
+    <div class="checkrow">
+      <input type="checkbox" id="f_detdraw">
+      <label for="f_detdraw">Detaljna kutija fioke (bočnice/dno/leđa fioke)</label>
+    </div>
+    <div id="f_drawerHeightsWrap" style="display:none;">
+      <label>Visine fioka (mm) — 0 = popuni ostatak</label>
+      <div id="f_drawerHeightsList"></div>
+      <div class="hint">Npr. upiši 200 za prvu, 350 za drugu fioku, a ostavi 0 kod preostalih da automatski ravnomjerno popune ostatak visine.</div>
+    </div>
+    <div id="f_shelvesWrap">
+      <label>Broj polica</label>
+      <input type="number" id="f_shelves" value="1" min="0">
+    </div>
+
+    <label>Leđa</label>
+    <select id="f_backtype">
+      <option value="full">Puna leđa</option>
+      <option value="short">Skraćena leđa (razmak od dna)</option>
+      <option value="none">Bez leđa (potpuno otvoreno)</option>
+    </select>
+    <div id="f_backgapWrap" style="display:none;">
+      <label>Razmak od dna (mm)</label>
+      <input type="number" id="f_backgap" value="200">
+      <div class="hint">Npr. kod elementa za sudoper ostavi prostor ispod leđa za sifon i cijevi.</div>
+    </div>
+
+    <label>Materijal korpusa</label>
+    <select id="f_mat"></select>
+    <label>Materijal fronte</label>
+    <select id="f_frontmat"></select>
+    <label>Ivica (fronte / vidljive ivice)</label>
+    <select id="f_edge">
+      <option>ABS 0.4mm</option>
+      <option>ABS 2mm</option>
+      <option>bez ivice</option>
+    </select>
+
+    <label>Količina istih ormarića</label>
+    <input type="number" id="f_qty" value="1" min="1">
+
+    <button class="primary" id="btnAddCab">+ Dodaj u zid</button>
+    <input type="hidden" id="f_editId">
+
+    <h2 class="section-title">Elementi u zidu</h2>
+    <div id="cabList"></div>
+  </aside>
+
+  <main>
+    <div class="tabs">
+      <div class="tab active" data-tab="layout">Raspored</div>
+      <div class="tab" data-tab="cutlist">Krojna lista</div>
+      <div class="tab" data-tab="assembly">Sklapanje</div>
+      <div class="tab" data-tab="hardware">Okov</div>
+      <div class="tab" data-tab="nesting">Optimizacija reza</div>
+      <div class="tab" data-tab="materials">Materijali</div>
+      <div class="tab" data-tab="settings">Postavke</div>
+    </div>
+
+    <div class="tabpanel active" id="tab-layout">
+      <div class="wall-title" id="layoutWallName">—</div>
+      <div class="wall-meta" id="layoutWallMeta">—</div>
+      <div class="floorstrip"><div class="floorrow" id="floorRow"></div></div>
+      <footer class="disclaimer">
+        Prikaz je pojednostavljen tlocrt (pogled odozgo/spreda, elementi poslagani u nizu duž zida). Za realan raspored more zidova/ćoškove koristi zasebne "zidove" iz lijevog panela.
+      </footer>
+    </div>
+
+    <div class="tabpanel" id="tab-cutlist">
+      <div class="toolbar">
+        <button class="ghost" id="btnCsv">⬇ Izvezi CSV</button>
+        <button class="ghost" id="btnPrintList">🖨 Ispis krojne liste</button>
+      </div>
+      <div id="cutlistBody"></div>
+    </div>
+
+    <div class="tabpanel" id="tab-assembly">
+      <div class="hint" style="margin-bottom:16px;">Rastavljeni (eksplodirani) prikaz svakog elementa — brojevi na dijelovima odgovaraju legendi ispod crteža, redoslijedom kojim se element sklapa.</div>
+      <div id="assemblyBody"></div>
+    </div>
+
+    <div class="tabpanel" id="tab-hardware">
+      <div class="toolbar">
+        <button class="ghost" id="btnHwCsv">⬇ Izvezi CSV</button>
+        <button class="ghost" id="btnPrintHw">🖨 Ispis</button>
+      </div>
+      <div id="hardwareBody"></div>
+    </div>
+
+    <div class="tabpanel" id="tab-nesting">
+      <div class="toolbar">
+        <button class="primary" style="width:auto;margin:0;" id="btnNest">⚙ Izračunaj raspored rezanja</button>
+        <button class="ghost" id="btnPrintNest">🖨 Ispis</button>
+      </div>
+      <div id="nestingBody"></div>
+    </div>
+
+    <div class="tabpanel" id="tab-materials">
+      <h2 class="section-title">Materijali (ploče)</h2>
+      <table class="mattbl" id="matTable"></table>
+      <button class="ghost" id="btnAddMat" style="margin-top:10px;">+ Dodaj materijal</button>
+    </div>
+
+    <div class="tabpanel" id="tab-settings">
+      <div class="settings-box">
+        <h2 class="section-title">Postavke rezanja</h2>
+        <div class="field">
+          <label>Širina reza / testere (kerf, mm)</label>
+          <input type="number" id="s_kerf" value="4">
+          <div class="hint">Debljina reza koja se gubi pri svakom rezu (list cirkulara ili glodala).</div>
+        </div>
+        <div class="field">
+          <label>Rub ploče koji se odbacuje (trim, mm)</label>
+          <input type="number" id="s_trim" value="10">
+          <div class="hint">Rezerviše se sa sve četiri strane ploče (neravan rub, oštećenje ambalaže i sl).</div>
+        </div>
+        <button class="primary" style="width:auto;" id="btnSaveSettings">Sačuvaj postavke</button>
+      </div>
+      <footer class="disclaimer">
+        Sve se čuva samo u tvom browseru (localStorage) — aplikacija ne šalje nikakve podatke na internet i radi potpuno lokalno/offline. Koristi "Sačuvaj (JSON)" da napraviš rezervnu kopiju projekta na disku.
+      </footer>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= STATE ================= */
+const LS_KEY = "kroj_kuhinje_state_v1";
+
+function defaultState(){
+  return {
+    activeWall: "w1",
+    walls: [
+      { id:"w1", name:"Zid 1", cabinets: [] }
+    ],
+    materials: [
+      { id:"m1", name:"Iverica bijela 18mm", thickness:18, sheetW:2800, sheetH:2070, grain:false },
+      { id:"m2", name:"HDF bijeli 3mm", thickness:3, sheetW:2800, sheetH:2070, grain:false },
+      { id:"m3", name:"Iverica dekor hrast 18mm", thickness:18, sheetW:2800, sheetH:2070, grain:true }
+    ],
+    settings: { kerf:4, trim:10 },
+    _seq: 1
+  };
+}
+
+let state = load() || defaultState();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+function persist(){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+function nextId(prefix){
+  state._seq = (state._seq||1)+1;
+  return prefix + state._seq;
+}
+function currentWall(){
+  return state.walls.find(w=>w.id===state.activeWall) || state.walls[0];
+}
+function matById(id){ return state.materials.find(m=>m.id===id); }
+
+/* ================= TYPE DEFAULTS ================= */
+const TYPE_DEFAULTS = {
+  base: { w:600, h:820, d:560, doors:1, drawers:0, shelves:1, backType:"full", backGap:200 },
+  wall: { w:600, h:720, d:300, doors:1, drawers:0, shelves:1, backType:"full", backGap:200 },
+  tall: { w:600, h:2000, d:560, doors:2, drawers:0, shelves:3, backType:"full", backGap:200 },
+  drawers: { w:600, h:820, d:560, doors:0, drawers:4, shelves:0, backType:"full", backGap:200 },
+  openshelf: { w:800, h:600, d:250, doors:0, drawers:0, shelves:3, backType:"none", backGap:0 }
+};
+const TYPE_LABEL = { base:"Bazni", wall:"Viseći", tall:"Visoki", drawers:"Ladičar", openshelf:"Otvorena polica" };
+
+// Raspoređuje visine fioka: eksplicitne vrijednosti (>0) se koriste kao zadate,
+// a preostale (0 = "popuni ostatak") ravnomjerno dijele preostali prostor.
+function computeDrawerHeights(totalZoneH, drawers, drawerHeights, gap){
+  if(drawers<=0) return [];
+  const explicit = [];
+  for(let i=0;i<drawers;i++){
+    const v = Number((drawerHeights||[])[i]);
+    explicit.push(v>0 ? v : 0);
+  }
+  const totalGaps = Math.max(0,drawers-1)*gap;
+  const availableH = Math.max(0, totalZoneH - totalGaps);
+  const explicitSum = explicit.reduce((s,v)=> s + (v>0?v:0), 0);
+  const autoCount = explicit.filter(v=>v<=0).length;
+  const remaining = Math.max(0, availableH - explicitSum);
+  const autoEach = autoCount>0 ? remaining/autoCount : 0;
+  return explicit.map(v=> v>0 ? v : autoEach);
+}
+
+/* ================= PANEL GENERATION (recepti) ================= */
+// Returns array of {name, w, h, qty, materialId, edge, cabinetName, wallName}
+function generatePanels(cab, wallName){
+  const t = matById(cab.material)?.thickness ?? 18;
+  const tf = matById(cab.frontMat)?.thickness ?? 18;
+  const W = cab.w, H = cab.h, D = cab.d;
+  const qtyMult = cab.qty || 1;
+  const edge = cab.edge;
+  const panels = [];
+  const push = (name, w, h, qty, materialId, edgeDesc)=>{
+    panels.push({
+      name, w:Math.round(w), h:Math.round(h), qty: qty*qtyMult,
+      materialId, edge: edgeDesc, cabinetName: cab.name, wallName
+    });
+  };
+
+  const mat = cab.material;
+
+  // Otvorena viseća polica — samo daske, bez korpusa/bočnica/leđa/fronte
+  if(cab.type === "openshelf"){
+    const shelfQty = Math.max(1, cab.shelves||1);
+    push("Polica (otvorena)", W, D, shelfQty, mat, "1 dužu stranu");
+    return panels;
+  }
+
+  // Carcass sides — common to all types
+  push("Bočnica", H, D, 2, mat, "1 dužu stranu");
+
+  if(cab.type === "base" || cab.type === "drawers"){
+    push("Dno", W-2*t, D, 1, mat, "1 dužu stranu");
+    push("Pod-gornjica (nosač)", W-2*t, 100, 2, mat, "bez ivice");
+  } else {
+    // wall & tall: full top+bottom
+    push("Gornjica", W-2*t, D, 1, mat, "bez ivice");
+    push("Dno", W-2*t, D, 1, mat, "1 dužu stranu");
+  }
+
+  // Back panel (HDF) — use HDF material if it exists in list, else same carcass mat
+  const hdf = state.materials.find(m=>/hdf|iverica.*3mm|leđa/i.test(m.name)) || matById(mat);
+  const backType = cab.backType || "full";
+  if(backType === "none"){
+    // bez leđa - potpuno otvoren zadnji dio (npr. maksimalan prostor za instalacije)
+  } else if(backType === "short"){
+    const bgap = Math.max(0, Math.min(H-2*t-20, cab.backGap||0));
+    push("Leđa (skraćena, razmak od dna "+bgap+"mm)", W-2*t, (H-2*t)-bgap, 1, hdf.id, "bez ivice");
+  } else {
+    push("Leđa (HDF)", W-2*t, H-2*t, 1, hdf.id, "bez ivice");
+  }
+
+  // Shelves
+  const shelfQty = Math.max(0, cab.shelves||0);
+  if(shelfQty > 0){
+    push("Polica", W-2*t-4, D-20, shelfQty, mat, "1 dužu stranu");
+  }
+
+  // Fronts: doors
+  const doors = cab.doors||0;
+  const drawers = cab.drawers||0;
+  const gap = 3; // gap between fronts
+  const totalFrontH = H - 4;
+
+  if(doors > 0){
+    // if there are also drawers, doors occupy remaining height below drawer zone
+    const drawerZoneH = drawers>0 ? Math.round(totalFrontH*0.28) : 0;
+    const doorZoneH = totalFrontH - drawerZoneH - (drawers>0?gap:0);
+    const doorW = (W - 4 - (doors-1)*gap)/doors;
+    push("Vrata (front)", doorW, doorZoneH, doors, cab.frontMat, edge+" (4 strane)");
+  }
+
+  if(drawers > 0){
+    const drawerZoneH = doors>0 ? Math.round(totalFrontH*0.28) : totalFrontH;
+    const heights = computeDrawerHeights(drawerZoneH, drawers, cab.drawerHeights||[], gap);
+    const frontW = W-4;
+    heights.forEach((h,i)=>{
+      push("Fioka "+(i+1)+" - front", frontW, h, 1, cab.frontMat, edge+" (4 strane)");
+      if(cab.detailedDrawers){
+        // simplified drawer box: 2 sides, 1 back, 1 bottom (thin material) per drawer
+        const boxMatId = mat; // reuse carcass material as approximation
+        const boxH = Math.max(60, Math.min(h-8, 150)); // realan zid kutije, ograničen na visinu fronte
+        const boxD = D - 50;
+        push("Fioka "+(i+1)+" - bočnica kutije", boxD, boxH, 2, boxMatId, "1 dužu stranu");
+        push("Fioka "+(i+1)+" - zadnja stranica", frontW-36, boxH, 1, boxMatId, "bez ivice");
+        push("Fioka "+(i+1)+" - dno kutije (HDF)", frontW-36, boxD-10, 1, hdf.id, "bez ivice");
+      }
+    });
+  }
+
+  return panels;
+}
+
+function allPanels(){
+  let out = [];
+  state.walls.forEach(w=>{
+    w.cabinets.forEach(c=>{
+      out = out.concat(generatePanels(c, w.name));
+    });
+  });
+  return out;
+}
+
+/* ================= OKOV (HARDWARE) ================= */
+function hingeCountForHeight(doorH){
+  if(doorH <= 900) return 2;
+  if(doorH <= 1600) return 3;
+  return 4;
+}
+
+// Vraća detaljan obračun okova za jedan ormarić (po jedinici, prije množenja sa qty)
+function computeCabinetHardware(cab){
+  const t = matById(cab.material)?.thickness ?? 18;
+  const W = cab.w, H = cab.h, D = cab.d;
+  const items = []; // {name, qty}
+  const add = (name, qty)=>{ if(qty>0) items.push({name, qty}); };
+
+  if(cab.type === 'openshelf'){
+    const shelfQty = Math.max(1, cab.shelves||1);
+    add("Zidni nosač police", shelfQty*2);
+    add("Tipl + vijak za zid", shelfQty*2*3);
+    return items;
+  }
+
+  const doors = cab.doors||0, drawers = cab.drawers||0;
+  const totalFrontH = H-4;
+  const drawerZoneH = (doors>0 && drawers>0) ? Math.round(totalFrontH*0.28) : (drawers>0 ? totalFrontH : 0);
+  const doorZoneH = doors>0 ? (totalFrontH - drawerZoneH - (drawers>0?3:0)) : 0;
+
+  // Šarke — po vratima, broj zavisi od visine vrata
+  if(doors>0) add("Šarka (kruta/polukruta)", doors * hingeCountForHeight(doorZoneH));
+
+  // Klizači za ladice — 1 par (2 kom) po fioci
+  if(drawers>0) add("Klizač za fioku (par = 2 kom)", drawers*2);
+
+  // Ručke — po vratima i fiokama (1 kom svaka)
+  add("Ručka", doors + drawers);
+
+  // Konfirmat vijci za spoj korpusa
+  let panelJoints = 0; // broj punih panela koji se spajaju na obje bočnice
+  if(cab.type === 'base' || cab.type === 'drawers') panelJoints = 3; // dno + 2x pod-gornjica
+  else if(cab.type === 'tall' || cab.type === 'wall') panelJoints = 2; // gornjica + dno
+  add("Konfirmat vijak (korpus)", panelJoints*2*2);
+
+  // Nosači/tiple za police (unutrašnje, ne otvorena polica)
+  const shelfQty = Math.max(0, cab.shelves||0);
+  add("Nosač police (tiplica)", shelfQty*4);
+
+  // HDF spajalice za leđa
+  const backType = cab.backType || 'full';
+  if(backType !== 'none') add("Spajalica za leđa (HDF)", 12);
+
+  // Noge — za podne (donje) elemente
+  if(cab.type==='base' || cab.type==='drawers' || cab.type==='tall') add("Noga (podesiva plastična/metalna)", 4);
+
+  // Vijci za montažu visećih elemenata na zid
+  if(cab.type==='wall') add("Vijak + tipl za montažu na zid", 4);
+
+  return items;
+}
+
+function renderHardware(){
+  const body = document.getElementById("hardwareBody");
+  const allCabs = [];
+  state.walls.forEach(w=> w.cabinets.forEach(c=> allCabs.push({cab:c, wallName:w.name})) );
+  if(!allCabs.length){
+    body.innerHTML = '<div class="empty-note">Nema elemenata u projektu.</div>';
+    return;
+  }
+
+  // Ukupni zbroj po nazivu stavke (za sve ormariće, uzimajući u obzir kom.)
+  const grand = {};
+  const perCabRows = [];
+  allCabs.forEach(({cab,wallName})=>{
+    const items = computeCabinetHardware(cab);
+    items.forEach(it=>{
+      const totalQty = it.qty * (cab.qty||1);
+      grand[it.name] = (grand[it.name]||0) + totalQty;
+      perCabRows.push({ wallName, cabName: cab.name, type: TYPE_LABEL[cab.type], name: it.name, unitQty: it.qty, cabQty: cab.qty||1, totalQty });
+    });
+  });
+
+  const summaryOrder = ["Šarka (kruta/polukruta)","Konfirmat vijak (korpus)","Klizač za fioku (par = 2 kom)","Noga (podesiva plastična/metalna)","Ručka","Nosač police (tiplica)","Zidni nosač police"];
+  let summaryHtml = '<div class="hw-summary">';
+  summaryOrder.forEach(name=>{
+    if(grand[name]){
+      summaryHtml += `<div class="hw-card"><div class="hw-num">${grand[name]}</div><div class="hw-lbl">${name}</div></div>`;
+    }
+  });
+  summaryHtml += '</div>';
+
+  let rowsHtml = perCabRows.map((r,i)=>`<tr>
+    <td>${i+1}</td>
+    <td class="name">${r.name}</td>
+    <td>${r.wallName}</td>
+    <td>${r.cabName} (${r.type})</td>
+    <td>${r.unitQty}</td>
+    <td>${r.cabQty}</td>
+    <td>${r.totalQty}</td>
+  </tr>`).join("");
+
+  body.innerHTML = summaryHtml + `
+    <table class="hwtbl">
+      <thead><tr><th>#</th><th>Stavka</th><th>Zid</th><th>Element</th><th>Kom/1 el.</th><th>Broj el.</th><th>Ukupno</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <div class="hint">Okvirne količine na osnovu standardnih pravila struke (npr. 2/3/4 šarke po vratima zavisno od visine, 4 konfirmata po spoju panela). Prilagodi stvarnom sistemu okova koji koristiš.</div>`;
+}
+
+function exportHardwareCsv(){
+  const allCabs = [];
+  state.walls.forEach(w=> w.cabinets.forEach(c=> allCabs.push({cab:c, wallName:w.name})) );
+  if(!allCabs.length){ alert("Nema podataka za izvoz."); return; }
+  let csv = "Stavka;Zid;Element;Tip;Kom po elementu;Broj elemenata;Ukupno\n";
+  allCabs.forEach(({cab,wallName})=>{
+    computeCabinetHardware(cab).forEach(it=>{
+      const totalQty = it.qty*(cab.qty||1);
+      csv += [it.name,wallName,cab.name,TYPE_LABEL[cab.type],it.qty,cab.qty||1,totalQty].join(";") + "\n";
+    });
+  });
+  downloadBlob(csv, "okov_lista.csv", "text/csv;charset=utf-8");
+}
+
+/* ================= ASSEMBLY / EKSPLODIRANI PRIKAZ ================= */
+// Generic isometric projection
+function isoProject(x,y,z){
+  const cos30 = Math.cos(Math.PI/6), sin30 = Math.sin(Math.PI/6);
+  return { sx: (x - z) * cos30, sy: (x + z) * sin30 - y };
+}
+
+// Build a 3D-boxes model of the cabinet for the exploded assembly drawing.
+// Coordinates: x: 0..W (left-right), y: 0..H (bottom-top), z: 0..D (front(0)-back(D))
+function generateAssemblyParts(cab){
+  const t = matById(cab.material)?.thickness ?? 18;
+  const tf = matById(cab.frontMat)?.thickness ?? 18;
+  const W = cab.w, H = cab.h, D = cab.d;
+  const parts = [];
+  let num = 1;
+  const add = (name, axisThin, range, explode, group)=>{
+    parts.push({ id:num++, name, axisThin, range, explode, group });
+  };
+
+  // Otvorena viseća polica — samo daske (vidljive, nema korpusa)
+  if(cab.type === 'openshelf'){
+    const shelfQty = Math.max(1, cab.shelves||1);
+    for(let i=0;i<shelfQty;i++){
+      const yPos = shelfQty===1 ? H/2 : H * (i/(shelfQty-1));
+      add("Polica "+(i+1), 'y', {x:[0,W], y:[Math.max(0,yPos-9),yPos+9], z:[0,D]}, true, 'shelf');
+    }
+    return parts;
+  }
+
+  // Sklopljen (ne eksplodiran) položaj: z=0 je pozadina (leđa), z=D je prednja strana (vrata/fioke).
+  // Vidljivo (iz standardnog izometrijskog ugla): x=max (desna bočnica), y=max (gornja ploča), z=max (prednja strana).
+  // Skriveno/iza (crta se isprekidano): x=min (lijeva bočnica), y=min (dno), z=min (leđa), sve unutrašnje police.
+  add("Bočnica (desna)", 'x', {x:[W-t,W], y:[0,H], z:[0,D]}, true, 'side');
+  add("Bočnica (lijeva)", 'x', {x:[0,t], y:[0,H], z:[0,D]}, false, 'side');
+
+  if(cab.type === 'base' || cab.type === 'drawers'){
+    add("Dno", 'y', {x:[t,W-t], y:[0,t], z:[0,D]}, false, 'bottom');
+    add("Pod-gornjica prednja", 'y', {x:[t,W-t], y:[H-t,H], z:[D-100,D]}, true, 'top');
+    add("Pod-gornjica zadnja", 'y', {x:[t,W-t], y:[H-t,H], z:[0,100]}, true, 'top');
+  } else {
+    add("Gornjica", 'y', {x:[t,W-t], y:[H-t,H], z:[0,D]}, true, 'top');
+    add("Dno", 'y', {x:[t,W-t], y:[0,t], z:[0,D]}, false, 'bottom');
+  }
+
+  const backType = cab.backType || 'full';
+  if(backType !== 'none'){
+    let y0 = t, y1 = H-t;
+    if(backType === 'short'){
+      const bgap = Math.max(0, Math.min(H-2*t-20, cab.backGap||0));
+      y0 = t + bgap;
+    }
+    add(backType==='short' ? "Leđa (skraćena)" : "Leđa (HDF)", 'z', {x:[t,W-t], y:[y0,y1], z:[0,3]}, false, 'back');
+  }
+
+  const shelfN = Math.max(0, cab.shelves||0);
+  for(let i=0;i<shelfN;i++){
+    const yPos = H * ((i+1)/(shelfN+1));
+    add("Polica "+(i+1), 'y', {x:[t+2,W-t-2], y:[yPos-9,yPos+9], z:[10,D-10]}, false, 'shelf');
+  }
+
+  const doors = cab.doors||0, drawers = cab.drawers||0;
+  const gap3 = 3, totalFrontH = H-4;
+  if(doors>0){
+    const drawerZoneH = drawers>0 ? Math.round(totalFrontH*0.28) : 0;
+    const doorZoneH = totalFrontH - drawerZoneH - (drawers>0?gap3:0);
+    const doorW = (W-4-(doors-1)*gap3)/doors;
+    for(let i=0;i<doors;i++){
+      const x0 = 2 + i*(doorW+gap3);
+      add("Vrata "+(i+1), 'z', {x:[x0,x0+doorW], y:[2,2+doorZoneH], z:[D,D+tf]}, true, 'front');
+    }
+  }
+  if(drawers>0){
+    const drawerZoneH = doors>0 ? Math.round(totalFrontH*0.28) : totalFrontH;
+    const heights = computeDrawerHeights(drawerZoneH, drawers, cab.drawerHeights||[], gap3);
+    const frontW = W-4;
+    let yCursor = H-2-drawerZoneH;
+    heights.forEach((h,i)=>{
+      add("Fioka "+(i+1)+" ("+Math.round(h)+"mm)", 'z', {x:[2,2+frontW], y:[yCursor,yCursor+h], z:[D,D+tf]}, true, 'front');
+      yCursor += h + gap3;
+    });
+  }
+  return parts;
+}
+
+// Vraća 4 ugla (u 3D) ravni panela na osnovu tanke ose (bez pomjeranja - sklopljen položaj)
+function faceCorners(part){
+  const r = part.range, ax = part.axisThin;
+  const [x0,x1]=r.x, [y0,y1]=r.y, [z0,z1]=r.z;
+  if(ax==='x'){ const xm=(x0+x1)/2; return [[xm,y0,z0],[xm,y1,z0],[xm,y1,z1],[xm,y0,z1]]; }
+  if(ax==='y'){ const ym=(y0+y1)/2; return [[x0,ym,z0],[x1,ym,z0],[x1,ym,z1],[x0,ym,z1]]; }
+  const zm=(z0+z1)/2; return [[x0,y0,zm],[x1,y0,zm],[x1,y1,zm],[x0,y1,zm]];
+}
+
+// 12 ivica kutije korpusa; ivice koje se spajaju u najudaljeniju tačku (0,0,0) su skrivene (isprekidano)
+function boxEdges(W,H,D){
+  const v000=[0,0,0], v100=[W,0,0], v010=[0,H,0], v001=[0,0,D],
+        v110=[W,H,0], v101=[W,0,D], v011=[0,H,D], v111=[W,H,D];
+  return [
+    {p1:v000,p2:v100,hidden:true},
+    {p1:v000,p2:v010,hidden:true},
+    {p1:v000,p2:v001,hidden:true},
+    {p1:v100,p2:v110,hidden:false},
+    {p1:v100,p2:v101,hidden:false},
+    {p1:v010,p2:v110,hidden:false},
+    {p1:v010,p2:v011,hidden:false},
+    {p1:v001,p2:v101,hidden:false},
+    {p1:v001,p2:v011,hidden:false},
+    {p1:v110,p2:v111,hidden:false},
+    {p1:v101,p2:v111,hidden:false},
+    {p1:v011,p2:v111,hidden:false}
+  ];
+}
+
+const GROUP_STROKE = { side:'#2B4C6F', bottom:'#8A5023', top:'#8A5023', back:'#A13D2E', shelf:'#4C7A52', front:'#A8662E' };
+
+function renderAssemblySVG(cab, boxSize){
+  const parts = generateAssemblyParts(cab);
+  const edges = cab.type === 'openshelf' ? [] : boxEdges(cab.w, cab.h, cab.d);
+
+  let allPts = [];
+  edges.forEach(e=>{ allPts.push(e.p1, e.p2); });
+  parts.forEach(p=> faceCorners(p).forEach(c=>allPts.push(c)) );
+  const proj = allPts.map(p=>isoProject(p[0],p[1],p[2]));
+  const minSx=Math.min(...proj.map(p=>p.sx)), maxSx=Math.max(...proj.map(p=>p.sx));
+  const minSy=Math.min(...proj.map(p=>p.sy)), maxSy=Math.max(...proj.map(p=>p.sy));
+  const margin = 34;
+  const scale = Math.min((boxSize-2*margin)/(maxSx-minSx||1), (boxSize-2*margin)/(maxSy-minSy||1));
+  const projPt = (p)=>{ const iso=isoProject(p[0],p[1],p[2]); return { X: margin+(iso.sx-minSx)*scale, Y: margin+(iso.sy-minSy)*scale }; };
+
+  let svg = "";
+
+  // 1) tanki referentni okvir kutije (skrivene ivice isprekidano) — preskoči za otvorenu policu
+  edges.forEach(e=>{
+    const a=projPt(e.p1), b=projPt(e.p2);
+    svg += `<line x1="${a.X.toFixed(1)}" y1="${a.Y.toFixed(1)}" x2="${b.X.toFixed(1)}" y2="${b.Y.toFixed(1)}" stroke="#BDB6A4" stroke-width="1.2" ${e.hidden?'stroke-dasharray="5,4"':''}/>`;
+  });
+
+  // 2) paneli — prvo skriveni (isprekidano, bljeđe), zatim vidljivi (puna linija) preko njih
+  const ordered = parts.slice().sort((a,b)=> (a.visible===b.visible)?0:(a.visible?1:-1));
+  ordered.forEach(part=>{
+    const corners = faceCorners(part).map(projPt);
+    const pointsAttr = corners.map(c=>`${c.X.toFixed(1)},${c.Y.toFixed(1)}`).join(" ");
+    const stroke = GROUP_STROKE[part.group] || '#555';
+    svg += `<polygon points="${pointsAttr}" fill="${stroke}" fill-opacity="${part.visible?0.10:0.045}" stroke="${stroke}" stroke-width="${part.visible?1.7:1.1}" ${part.visible?'':'stroke-dasharray="4,3"'} stroke-linejoin="round"/>`;
+  });
+
+  // 3) brojevi dijelova
+  ordered.forEach(part=>{
+    const corners = faceCorners(part).map(projPt);
+    const cx = corners.reduce((s,c)=>s+c.X,0)/4, cy = corners.reduce((s,c)=>s+c.Y,0)/4;
+    const stroke = GROUP_STROKE[part.group] || '#555';
+    svg += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="8.5" fill="${part.visible?stroke:'#fff'}" stroke="${stroke}" stroke-width="1.3"/>`;
+    svg += `<text x="${cx.toFixed(1)}" y="${(cy+3).toFixed(1)}" font-size="9.5" text-anchor="middle" font-family="monospace" fill="${part.visible?'#fff':stroke}">${part.id}</text>`;
+  });
+
+  return { svg, parts };
+}
+
+function assemblySteps(cab){
+  const steps = [];
+  if(cab.type === 'openshelf'){
+    const shelfQty = Math.max(1, cab.shelves||1);
+    steps.push(`Obilježi na zidu ${shelfQty} vodoravn(e/ih) linij(e) razmaknutih po visini elementa i provjeri libelom.`);
+    steps.push(`Učvrsti zidne nosače (2 po polici) u zidne tiple/moždanike.`);
+    steps.push(`Postavi ${shelfQty} dask(u/e) police na nosače i po potrebi fiksiraj odozdo vijkom.`);
+    return steps;
+  }
+  const anchorTop = cab.type==='base' ? "pod-gornjicama" : "gornjicom";
+  steps.push(`Spoji obje bočnice sa dnom i ${anchorTop} (konfirmat vijci + moždanici) — provjeri pravi ugao (dijagonale).`);
+  const bt = cab.backType || 'full';
+  if(bt==='full') steps.push("Umetni puna leđa (HDF) u falc sa zadnje strane i pričvrsti spajalicama.");
+  else if(bt==='short') steps.push(`Umetni skraćena leđa (HDF) — ostavljen je razmak od ${cab.backGap||0}mm od dna za instalacije (npr. sifon sudopera).`);
+  else steps.push("Element je bez leđa — radi stabilnosti dodaj dijagonalnu metalnu sponu u gornji ugao.");
+  if((cab.shelves||0)>0) steps.push(`Postavi nosače polica na željenu visinu i umetni ${cab.shelves} polic(u/e).`);
+  if((cab.doors||0)>0) steps.push(`Izbuši i montiraj šarke na vrata (${cab.doors} kom), zatim poravnaj na korpusu.`);
+  if((cab.drawers||0)>0) steps.push(`Montiraj vodilice i tijela fioka (${cab.drawers} kom), pa naknadno fronte fioka.`);
+  if(cab.type==='base' || cab.type==='drawers' || cab.type==='tall') steps.push(`Montiraj noge (4 kom) na dno korpusa i poravnaj visinu.`);
+  return steps;
+}
+
+function renderAssembly(){
+  const body = document.getElementById("assemblyBody");
+  const allCabs = [];
+  state.walls.forEach(w=> w.cabinets.forEach(c=> allCabs.push({cab:c, wallName:w.name})) );
+  if(!allCabs.length){
+    body.innerHTML = '<div class="empty-note">Nema elemenata u projektu.</div>';
+    return;
+  }
+  let html = `<div class="hint" style="margin-bottom:18px;">
+    <b style="color:var(--ink);">▬ Puna linija</b> = vidljivi dio (spolja) &nbsp;&nbsp; <b style="color:var(--ink);">┄ Isprekidana linija</b> = dio sakriven iza (leđa, dno, lijeva bočnica, unutrašnje police) — kao rendgenski/providan prikaz sklopljenog elementa.
+  </div>`;
+  allCabs.forEach(({cab,wallName})=>{
+    const { svg, parts } = renderAssemblySVG(cab, 380);
+    const legendRows = parts.map(p=>{
+      const r = p.range;
+      const dims = p.axisThin==='x' ? `${Math.round(r.y[1]-r.y[0])}×${Math.round(r.z[1]-r.z[0])}`
+                 : p.axisThin==='y' ? `${Math.round(r.x[1]-r.x[0])}×${Math.round(r.z[1]-r.z[0])}`
+                 : `${Math.round(r.x[1]-r.x[0])}×${Math.round(r.y[1]-r.y[0])}`;
+      const stroke = GROUP_STROKE[p.group] || '#555';
+      const chip = p.visible
+        ? `<span class="numchip" style="background:${stroke};">${p.id}</span>`
+        : `<span class="numchip" style="background:#fff;color:${stroke};border:1.3px dashed ${stroke};">${p.id}</span>`;
+      return `<tr><td class="num">${chip}</td><td>${p.name}</td><td>${dims}mm</td><td>${p.visible?"vidljivo":"skriveno (iza)"}</td></tr>`;
+    }).join("");
+    const steps = assemblySteps(cab).map((s,i)=>`<div class="step">${i+1}. ${s}</div>`).join("");
+    html += `<div class="asm-card">
+      <div class="asm-head">
+        <b>${cab.name}</b>
+        <span class="meta">${wallName} · ${TYPE_LABEL[cab.type]} · ${cab.w}×${cab.h}×${cab.d}mm · kom: ${cab.qty}</span>
+      </div>
+      <div class="asm-flex">
+        <div class="asm-svgbox"><svg width="380" height="380" viewBox="0 0 380 380">${svg}</svg></div>
+        <div class="asm-legend">
+          <table class="legendtbl"><thead><tr><th>#</th><th>Dio</th><th>Dimenzije</th><th>Vidljivost</th></tr></thead><tbody>${legendRows}</tbody></table>
+          <div class="asm-steps">${steps}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  body.innerHTML = html;
+}
+
+/* ================= RENDER: sidebar wall selector ================= */
+function renderWallSelect(){
+  const box = document.getElementById("wallSelect");
+  box.innerHTML = "";
+  state.walls.forEach(w=>{
+    const chip = document.createElement("div");
+    chip.className = "wall-chip" + (w.id===state.activeWall ? " active":"");
+    chip.textContent = w.name;
+    chip.onclick = ()=>{ state.activeWall = w.id; persist(); renderAll(); };
+    box.appendChild(chip);
+  });
+}
+
+/* ================= RENDER: material selects in form ================= */
+function renderMaterialSelects(){
+  const matSel = document.getElementById("f_mat");
+  const frontSel = document.getElementById("f_frontmat");
+  [matSel, frontSel].forEach(sel=>{
+    const cur = sel.value;
+    sel.innerHTML = "";
+    state.materials.forEach(m=>{
+      const o = document.createElement("option");
+      o.value = m.id; o.textContent = m.name + " (" + m.thickness + "mm)";
+      sel.appendChild(o);
+    });
+    if(cur) sel.value = cur;
+  });
+}
+
+/* ================= RENDER: cabinet list ================= */
+function renderCabList(){
+  const wall = currentWall();
+  const box = document.getElementById("cabList");
+  box.innerHTML = "";
+  if(!wall.cabinets.length){
+    box.innerHTML = '<div class="empty-note">Još nema elemenata u ovom zidu.</div>';
+    return;
+  }
+  wall.cabinets.forEach((c, idx)=>{
+    const div = document.createElement("div");
+    div.className = "cab-item";
+    div.innerHTML = `
+      <div class="info">
+        <b>${c.name}</b> — ${TYPE_LABEL[c.type]}<br>
+        <span class="d">${c.w}×${c.h}×${c.d}mm · v:${c.doors} f:${c.drawers} · kom:${c.qty}</span>
+      </div>
+      <div class="acts">
+        <button class="tiny" data-act="up" title="Pomjeri lijevo">↑</button>
+        <button class="tiny" data-act="down" title="Pomjeri desno">↓</button>
+        <button class="tiny edit" data-act="edit" title="Uredi">✎</button>
+        <button class="tiny" data-act="dup" title="Dupliraj">⎘</button>
+        <button class="tiny" data-act="del" title="Obriši">✕</button>
+      </div>`;
+    div.querySelectorAll("button").forEach(btn=>{
+      btn.onclick = ()=>{
+        const act = btn.dataset.act;
+        if(act==="del"){ wall.cabinets.splice(idx,1); }
+        else if(act==="up" && idx>0){ [wall.cabinets[idx-1],wall.cabinets[idx]]=[wall.cabinets[idx],wall.cabinets[idx-1]]; }
+        else if(act==="down" && idx<wall.cabinets.length-1){ [wall.cabinets[idx+1],wall.cabinets[idx]]=[wall.cabinets[idx],wall.cabinets[idx+1]]; }
+        else if(act==="dup"){ const copy = JSON.parse(JSON.stringify(c)); copy.id = nextId("c"); copy.name = c.name+"b"; wall.cabinets.splice(idx+1,0,copy); }
+        else if(act==="edit"){ fillFormForEdit(c); return; }
+        persist(); renderAll();
+      };
+    });
+    box.appendChild(div);
+  });
+}
+
+function fillFormForEdit(c){
+  document.getElementById("f_type").value = c.type;
+  document.getElementById("f_name").value = c.name;
+  document.getElementById("f_w").value = c.w;
+  document.getElementById("f_h").value = c.h;
+  document.getElementById("f_d").value = c.d;
+  document.getElementById("f_doors").value = c.doors;
+  document.getElementById("f_drawers").value = c.drawers;
+  document.getElementById("f_detdraw").checked = !!c.detailedDrawers;
+  renderDrawerHeightInputs(Number(c.drawers)||0, c.drawerHeights||[]);
+  document.getElementById("f_shelves").value = c.shelves;
+  document.getElementById("f_backtype").value = c.backType || "full";
+  document.getElementById("f_backgap").value = c.backGap != null ? c.backGap : 200;
+  toggleBackGap();
+  document.getElementById("f_mat").value = c.material;
+  document.getElementById("f_frontmat").value = c.frontMat;
+  document.getElementById("f_edge").value = c.edge;
+  document.getElementById("f_qty").value = c.qty;
+  document.getElementById("f_editId").value = c.id;
+  document.getElementById("btnAddCab").textContent = "✓ Sačuvaj izmjene";
+  window.scrollTo(0,0);
+}
+
+/* ================= RENDER: layout tab ================= */
+function renderLayout(){
+  const wall = currentWall();
+  document.getElementById("layoutWallName").textContent = wall.name;
+  const totalW = wall.cabinets.reduce((s,c)=>s+c.w*c.qty,0);
+  document.getElementById("layoutWallMeta").textContent =
+    wall.cabinets.length ? `Ukupna širina zida: ${totalW} mm  ·  ${wall.cabinets.length} tip(ova) elemenata` : "Nema elemenata";
+
+  const row = document.getElementById("floorRow");
+  row.innerHTML = "";
+  if(!wall.cabinets.length){
+    row.innerHTML = '<div class="empty-note">Dodaj elemente iz lijevog panela da vidiš raspored.</div>';
+    return;
+  }
+  const scale = Math.min(0.28, 900/Math.max(totalW,1));
+  wall.cabinets.forEach(c=>{
+    for(let i=0;i<c.qty;i++){
+      const el = document.createElement("div");
+      el.className = "cabblock" + (c.type==="wall" ? " wall-type":"");
+      el.style.width = Math.max(20, c.w*scale) + "px";
+      el.style.height = Math.max(40, c.h*scale*0.55) + "px";
+      el.innerHTML = `<div class="dim-top">${c.w}</div>
+        <div class="doorlines">${Array.from({length:Math.max(1,c.doors+c.drawers)}).map(()=>"<div></div>").join("")}</div>
+        <div class="lbl">${c.name}</div>`;
+      row.appendChild(el);
+    }
+  });
+}
+
+/* ================= RENDER: cutlist tab ================= */
+function renderCutlist(){
+  const panels = allPanels();
+  const body = document.getElementById("cutlistBody");
+  if(!panels.length){
+    body.innerHTML = '<div class="empty-note">Nema elemenata u projektu — dodaj ormariće u tabu "Raspored".</div>';
+    return;
+  }
+  const byMat = {};
+  panels.forEach(p=>{
+    byMat[p.materialId] = byMat[p.materialId] || [];
+    byMat[p.materialId].push(p);
+  });
+
+  let html = "";
+  let grandArea = 0, grandCount = 0;
+  Object.keys(byMat).forEach(mid=>{
+    const mat = matById(mid) || {name:"Nepoznat materijal"};
+    const rows = byMat[mid];
+    let areaSum = 0, countSum = 0;
+    let trs = rows.map((p,i)=>{
+      const areaEach = (p.w*p.h)/1e6;
+      areaSum += areaEach*p.qty;
+      countSum += p.qty;
+      return `<tr>
+        <td>${i+1}</td>
+        <td class="name">${p.name}</td>
+        <td>${p.cabinetName}</td>
+        <td>${p.w}</td>
+        <td>${p.h}</td>
+        <td>${p.qty}</td>
+        <td>${p.edge}</td>
+        <td>${(areaEach*p.qty).toFixed(3)}</td>
+      </tr>`;
+    }).join("");
+    grandArea += areaSum; grandCount += countSum;
+    html += `
+      <div class="mat-group">
+        <div class="mat-head">
+          <div class="mname">${mat.name}</div>
+          <div class="msum">${countSum} kom · ${areaSum.toFixed(2)} m²</div>
+        </div>
+        <table class="cutlist">
+          <thead><tr>
+            <th>#</th><th>Naziv panela</th><th>Ormarić</th><th>Dužina (mm)</th><th>Širina (mm)</th><th>Kom</th><th>Ivica</th><th>m²</th>
+          </tr></thead>
+          <tbody>${trs}</tbody>
+        </table>
+      </div>`;
+  });
+  html += `<div class="hint" style="margin-top:-10px;">UKUPNO: ${grandCount} panela · ${grandArea.toFixed(2)} m² (bruto, bez optimizacije rezanja)</div>`;
+  body.innerHTML = html;
+}
+
+function exportCsv(){
+  const panels = allPanels();
+  if(!panels.length){ alert("Nema podataka za izvoz."); return; }
+  let csv = "Materijal;Naziv panela;Ormaric;Duzina(mm);Sirina(mm);Kom;Ivica\n";
+  panels.forEach(p=>{
+    const mat = matById(p.materialId)?.name || "";
+    csv += [mat,p.name,p.cabinetName,p.w,p.h,p.qty,p.edge].join(";") + "\n";
+  });
+  downloadBlob(csv, "krojna_lista.csv", "text/csv;charset=utf-8");
+}
+
+/* ================= NESTING (optimizacija reza) ================= */
+// Simple shelf-based bin packing (Shelf Best Height Fit), supports rotation unless grain=true
+function nestMaterial(mat, panelList, kerf, trim){
+  // Expand qty into individual pieces
+  let pieces = [];
+  panelList.forEach(p=>{
+    for(let i=0;i<p.qty;i++){
+      pieces.push({ name:p.name, cabinetName:p.cabinetName, w:p.w, h:p.h });
+    }
+  });
+  // sort descending by height (long side first for shelf efficiency)
+  pieces.sort((a,b)=> Math.max(b.w,b.h) - Math.max(a.w,a.h));
+
+  const usableW = mat.sheetW - 2*trim;
+  const usableH = mat.sheetH - 2*trim;
+
+  let sheets = [];
+  let sheet = newSheet();
+  function newSheet(){
+    const s = { shelves:[], usedArea:0 };
+    sheets.push(s);
+    return s;
+  }
+  function tryPlaceOnSheet(s, piece){
+    // try existing shelves
+    for(const sh of s.shelves){
+      // orientation 1: as-is
+      if(piece.w <= sh.remainingW && piece.h <= sh.h){
+        placeInShelf(sh, piece, piece.w, piece.h);
+        return true;
+      }
+      // orientation 2: rotated
+      if(!mat.grain && piece.h <= sh.remainingW && piece.w <= sh.h){
+        placeInShelf(sh, piece, piece.h, piece.w, true);
+        return true;
+      }
+    }
+    // new shelf
+    const usedH = s.shelves.reduce((sum,sh)=>sum+sh.h+kerf,0);
+    const remH = usableH - usedH;
+    // orientation 1
+    if(piece.h <= remH && piece.w <= usableW){
+      const sh = { y:usedH, h:piece.h, remainingW:usableW, items:[] };
+      s.shelves.push(sh);
+      placeInShelf(sh, piece, piece.w, piece.h);
+      return true;
+    }
+    // orientation 2 rotated
+    if(!mat.grain && piece.w <= remH && piece.h <= usableW){
+      const sh = { y:usedH, h:piece.w, remainingW:usableW, items:[] };
+      s.shelves.push(sh);
+      placeInShelf(sh, piece, piece.h, piece.w, true);
+      return true;
+    }
+    return false;
+  }
+  function placeInShelf(sh, piece, w, h, rotated){
+    const x = usableW - sh.remainingW;
+    sh.items.push({ x, y:sh.y, w, h, name:piece.name, cabinetName:piece.cabinetName, rotated:!!rotated });
+    sh.remainingW -= (w + kerf);
+  }
+
+  pieces.forEach(p=>{
+    if(p.w > usableW && p.h > usableW && p.w > usableH && p.h > usableH){
+      // doesn't fit at all in either orientation — skip with warning flag
+      p._toobig = true;
+      return;
+    }
+    let placed = tryPlaceOnSheet(sheet, p);
+    if(!placed){
+      sheet = newSheet();
+      placed = tryPlaceOnSheet(sheet, p);
+    }
+    if(!placed){ p._toobig = true; }
+  });
+
+  // compute utilization
+  const results = sheets.map(s=>{
+    let used = 0;
+    s.shelves.forEach(sh=>sh.items.forEach(it=> used += it.w*it.h));
+    const total = mat.sheetW*mat.sheetH;
+    return { shelves:s.shelves, utilization: used/total };
+  });
+  const tooBig = pieces.filter(p=>p._toobig);
+  return { sheets: results, tooBig };
+}
+
+function renderNesting(){
+  const body = document.getElementById("nestingBody");
+  const kerf = state.settings.kerf, trim = state.settings.trim;
+  const panels = allPanels();
+  if(!panels.length){
+    body.innerHTML = '<div class="empty-note">Nema elemenata u projektu.</div>';
+    return;
+  }
+  const byMat = {};
+  panels.forEach(p=>{ byMat[p.materialId] = byMat[p.materialId]||[]; byMat[p.materialId].push(p); });
+
+  let html = "";
+  Object.keys(byMat).forEach(mid=>{
+    const mat = matById(mid);
+    if(!mat) return;
+    const { sheets, tooBig } = nestMaterial(mat, byMat[mid], kerf, trim);
+    const avgUtil = sheets.length ? sheets.reduce((s,x)=>s+x.utilization,0)/sheets.length : 0;
+    const utilColor = avgUtil>0.75 ? "var(--green)" : avgUtil>0.55 ? "var(--wood)" : "var(--red)";
+
+    html += `<div class="sheet-wrap">
+      <div class="sheet-info">
+        <b>${mat.name}</b>
+        <span class="hint">Format ploče: ${mat.sheetW}×${mat.sheetH}mm · ${mat.grain?"sa smjerom teksture (bez rotacije)":"bez smjera teksture (rotacija dozvoljena)"}</span>
+        <span class="util-badge" style="background:${utilColor}">${sheets.length} ploča · prosj. iskorištenost ${(avgUtil*100).toFixed(0)}%</span>
+      </div>
+      <div class="sheets-row">`;
+
+    sheets.forEach((s, si)=>{
+      const vbW = mat.sheetW, vbH = mat.sheetH;
+      const scale = 260 / Math.max(vbW, vbH);
+      const pxW = vbW*scale, pxH = vbH*scale;
+      let rects = "";
+      let colorIdx = 0;
+      const palette = ["#EFF3F6","#F6F0E8","#EDEFE2","#F3E9EC","#E9F0EF","#F0EEE8"];
+      s.shelves.forEach(sh=>{
+        sh.items.forEach(it=>{
+          const rx = (trim + it.x)*scale, ry = (trim + sh.y)*scale;
+          const rw = it.w*scale, rh = it.h*scale;
+          rects += `<rect x="${rx}" y="${ry}" width="${rw}" height="${rh}" fill="${palette[colorIdx%palette.length]}" stroke="#2B4C6F" stroke-width="1"/>`;
+          if(rw>34 && rh>14){
+            rects += `<text x="${rx+rw/2}" y="${ry+rh/2-3}" font-size="8" text-anchor="middle" font-family="monospace" fill="#211D18">${it.name}${it.rotated?" ↻":""}</text>`;
+            rects += `<text x="${rx+rw/2}" y="${ry+rh/2+8}" font-size="7.5" text-anchor="middle" font-family="monospace" fill="#57524A">${it.w}×${it.h}</text>`;
+          }
+          colorIdx++;
+        });
+      });
+      html += `<div class="sheet-svg-box">
+        <div class="stitle">PLOČA ${si+1} — iskorištenost ${(s.utilization*100).toFixed(0)}%</div>
+        <svg width="${pxW}" height="${pxH}" viewBox="0 0 ${pxW} ${pxH}" style="background:#fff;">
+          <rect x="0" y="0" width="${pxW}" height="${pxH}" fill="#fff" stroke="#BDB6A4"/>
+          ${rects}
+        </svg>
+      </div>`;
+    });
+    html += `</div>`;
+    if(tooBig.length){
+      html += `<div class="hint" style="color:var(--red);">⚠ ${tooBig.length} panel(a) ne staje ni u jednu orijentaciju na odabrani format ploče: ${tooBig.map(p=>p.name).join(", ")}</div>`;
+    }
+    html += `</div>`;
+  });
+  body.innerHTML = html;
+}
+
+/* ================= MATERIALS TAB ================= */
+function renderMaterials(){
+  const tbl = document.getElementById("matTable");
+  let html = `<thead><tr>
+    <th>Naziv</th><th>Debljina(mm)</th><th>Format ploče Š×V(mm)</th><th>Smjer teksture</th><th></th>
+  </tr></thead><tbody>`;
+  state.materials.forEach(m=>{
+    html += `<tr data-id="${m.id}">
+      <td><input type="text" value="${m.name}" data-f="name"></td>
+      <td><input type="number" value="${m.thickness}" data-f="thickness" style="width:70px;"></td>
+      <td style="display:flex;gap:4px;">
+        <input type="number" value="${m.sheetW}" data-f="sheetW" style="width:70px;">
+        <span style="align-self:center;">×</span>
+        <input type="number" value="${m.sheetH}" data-f="sheetH" style="width:70px;">
+      </td>
+      <td><input type="checkbox" ${m.grain?"checked":""} data-f="grain"></td>
+      <td><button class="tiny" data-act="delmat">✕</button></td>
+    </tr>`;
+  });
+  html += "</tbody>";
+  tbl.innerHTML = html;
+
+  tbl.querySelectorAll("tr[data-id]").forEach(tr=>{
+    const id = tr.dataset.id;
+    tr.querySelectorAll("input").forEach(inp=>{
+      inp.onchange = ()=>{
+        const m = matById(id);
+        const f = inp.dataset.f;
+        if(f==="grain") m[f] = inp.checked;
+        else if(f==="name") m[f] = inp.value;
+        else m[f] = Number(inp.value);
+        persist(); renderMaterialSelects();
+      };
+    });
+    tr.querySelector('[data-act="delmat"]').onclick = ()=>{
+      if(!confirm("Obrisati materijal? Paneli koji ga koriste ostat će s nepostojećim ID-om.")) return;
+      state.materials = state.materials.filter(m=>m.id!==id);
+      persist(); renderAll();
+    };
+  });
+}
+
+/* ================= HELPERS ================= */
+function downloadBlob(content, filename, type){
+  const blob = new Blob([content], {type});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ================= EVENTS ================= */
+document.getElementById("f_type").addEventListener("change", (e)=>{
+  const d = TYPE_DEFAULTS[e.target.value];
+  document.getElementById("f_w").value = d.w;
+  document.getElementById("f_h").value = d.h;
+  document.getElementById("f_d").value = d.d;
+  document.getElementById("f_doors").value = d.doors;
+  document.getElementById("f_drawers").value = d.drawers;
+  document.getElementById("f_shelves").value = d.shelves;
+  document.getElementById("f_backtype").value = d.backType;
+  document.getElementById("f_backgap").value = d.backGap;
+  toggleBackGap();
+  renderDrawerHeightInputs(d.drawers, []);
+});
+
+function toggleBackGap(){
+  document.getElementById("f_backgapWrap").style.display =
+    document.getElementById("f_backtype").value === "short" ? "block" : "none";
+}
+document.getElementById("f_backtype").addEventListener("change", toggleBackGap);
+
+// Dinamička lista polja za visinu svake fioke
+function renderDrawerHeightInputs(count, values){
+  const wrap = document.getElementById("f_drawerHeightsWrap");
+  const list = document.getElementById("f_drawerHeightsList");
+  count = Math.max(0, Number(count)||0);
+  if(count <= 0){ wrap.style.display = "none"; list.innerHTML = ""; return; }
+  wrap.style.display = "block";
+  list.innerHTML = "";
+  for(let i=0;i<count;i++){
+    const val = (values && values[i]!=null) ? values[i] : 0;
+    const row = document.createElement("div");
+    row.style.cssText = "display:flex;align-items:center;gap:6px;margin-bottom:5px;";
+    row.innerHTML = `<span style="font-family:var(--mono);font-size:11px;color:var(--ink-soft);width:52px;flex-shrink:0;">Fioka ${i+1}</span>
+      <input type="number" class="drawerHInput" data-idx="${i}" value="${val}" placeholder="0 = ostatak">`;
+    list.appendChild(row);
+  }
+}
+function readDrawerHeights(){
+  return Array.from(document.querySelectorAll(".drawerHInput")).map(inp=>Number(inp.value)||0);
+}
+document.getElementById("f_drawers").addEventListener("input", ()=>{
+  const n = Number(document.getElementById("f_drawers").value)||0;
+  const prev = readDrawerHeights();
+  renderDrawerHeightInputs(n, prev);
+});
+
+document.getElementById("btnAddCab").addEventListener("click", ()=>{
+  const wall = currentWall();
+  const editId = document.getElementById("f_editId").value;
+  const cab = {
+    id: editId || nextId("c"),
+    type: document.getElementById("f_type").value,
+    name: document.getElementById("f_name").value || ("EL" + (wall.cabinets.length+1)),
+    w: Number(document.getElementById("f_w").value),
+    h: Number(document.getElementById("f_h").value),
+    d: Number(document.getElementById("f_d").value),
+    doors: Number(document.getElementById("f_doors").value),
+    drawers: Number(document.getElementById("f_drawers").value),
+    drawerHeights: readDrawerHeights(),
+    detailedDrawers: document.getElementById("f_detdraw").checked,
+    shelves: Number(document.getElementById("f_shelves").value),
+    backType: document.getElementById("f_backtype").value,
+    backGap: Number(document.getElementById("f_backgap").value),
+    material: document.getElementById("f_mat").value,
+    frontMat: document.getElementById("f_frontmat").value,
+    edge: document.getElementById("f_edge").value,
+    qty: Math.max(1, Number(document.getElementById("f_qty").value))
+  };
+  if(editId){
+    const idx = wall.cabinets.findIndex(c=>c.id===editId);
+    if(idx>-1) wall.cabinets[idx] = cab;
+    document.getElementById("f_editId").value = "";
+    document.getElementById("btnAddCab").textContent = "+ Dodaj u zid";
+  } else {
+    wall.cabinets.push(cab);
+  }
+  persist(); renderAll();
+});
+
+document.getElementById("btnAddWall").addEventListener("click", ()=>{
+  const name = prompt("Naziv novog zida:", "Zid " + (state.walls.length+1));
+  if(!name) return;
+  const w = { id: nextId("w"), name, cabinets: [] };
+  state.walls.push(w);
+  state.activeWall = w.id;
+  persist(); renderAll();
+});
+document.getElementById("btnRenWall").addEventListener("click", ()=>{
+  const wall = currentWall();
+  const name = prompt("Novi naziv zida:", wall.name);
+  if(!name) return;
+  wall.name = name; persist(); renderAll();
+});
+document.getElementById("btnDelWall").addEventListener("click", ()=>{
+  if(state.walls.length<=1){ alert("Mora postojati bar jedan zid."); return; }
+  if(!confirm("Obrisati zid i sve elemente u njemu?")) return;
+  state.walls = state.walls.filter(w=>w.id!==state.activeWall);
+  state.activeWall = state.walls[0].id;
+  persist(); renderAll();
+});
+
+document.getElementById("btnAddMat").addEventListener("click", ()=>{
+  state.materials.push({ id: nextId("m"), name:"Novi materijal", thickness:18, sheetW:2800, sheetH:2070, grain:false });
+  persist(); renderAll();
+});
+
+document.getElementById("btnCsv").addEventListener("click", exportCsv);
+document.getElementById("btnPrintList").addEventListener("click", ()=>{
+  document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("print-active"));
+  document.getElementById("tab-cutlist").classList.add("print-active");
+  window.print();
+});
+document.getElementById("btnPrintNest").addEventListener("click", ()=>{
+  document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("print-active"));
+  document.getElementById("tab-nesting").classList.add("print-active");
+  window.print();
+});
+document.getElementById("btnNest").addEventListener("click", renderNesting);
+document.getElementById("btnHwCsv").addEventListener("click", exportHardwareCsv);
+document.getElementById("btnPrintHw").addEventListener("click", ()=>{
+  document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("print-active"));
+  document.getElementById("tab-hardware").classList.add("print-active");
+  window.print();
+});
+
+document.getElementById("btnSaveSettings").addEventListener("click", ()=>{
+  state.settings.kerf = Number(document.getElementById("s_kerf").value);
+  state.settings.trim = Number(document.getElementById("s_trim").value);
+  persist();
+  alert("Postavke sačuvane.");
+});
+
+document.getElementById("btnSave").addEventListener("click", ()=>{
+  downloadBlob(JSON.stringify(state, null, 2), "kuhinja_projekat.json", "application/json");
+});
+document.getElementById("btnLoad").addEventListener("click", ()=> document.getElementById("fileLoad").click());
+document.getElementById("fileLoad").addEventListener("change", (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const parsed = JSON.parse(reader.result);
+      state = parsed;
+      persist(); renderAll();
+      alert("Projekat učitan.");
+    }catch(err){ alert("Greška pri učitavanju fajla."); }
+  };
+  reader.readAsText(file);
+});
+document.getElementById("btnReset").addEventListener("click", ()=>{
+  if(!confirm("Ovo briše trenutni projekat iz browsera. Nastaviti?")) return;
+  state = defaultState();
+  persist(); renderAll();
+});
+
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById("tab-"+tab.dataset.tab).classList.add("active");
+    if(tab.dataset.tab==="cutlist") renderCutlist();
+    if(tab.dataset.tab==="nesting") renderNesting();
+    if(tab.dataset.tab==="assembly") renderAssembly();
+    if(tab.dataset.tab==="hardware") renderHardware();
+  });
+});
+
+/* ================= INIT ================= */
+function renderAll(){
+  renderWallSelect();
+  renderMaterialSelects();
+  renderCabList();
+  renderLayout();
+  renderCutlist();
+  renderAssembly();
+  renderHardware();
+  renderMaterials();
+  document.getElementById("s_kerf").value = state.settings.kerf;
+  document.getElementById("s_trim").value = state.settings.trim;
+}
+renderAll();
+
+})();
+</script>
+</body>
+</html>
