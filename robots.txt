@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kroj-kuhinja.vercel.app/sitemap.xml

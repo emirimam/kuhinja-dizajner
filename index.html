@@ -3,7 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KROJ — Dizajner kuhinje</title>
+<title>KROJ — Besplatni dizajner kuhinje online | Krojna lista i optimizacija reza</title>
+<meta name="description" content="Besplatan alat za dizajn kuhinje: slaži bazne, viseće, visoke ormariće i ladičare, automatski dobij krojnu/reznu listu, optimizaciju rezanja ploča, listu okova (šarke, vijci, klizači, noge) i 3D prikaz sklapanja. Radi u browseru, bez instalacije.">
+<meta name="keywords" content="dizajner kuhinje, krojna lista, rezna lista, optimizacija rezanja ploča, projektovanje kuhinje, kuhinjski ormarići, ladičar, namještaj kalkulator, nesting ploča">
+<meta name="robots" content="index, follow">
+<meta name="author" content="KROJ">
+<link rel="canonical" href="https://kroj-kuhinja.vercel.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="KROJ — Besplatni dizajner kuhinje online">
+<meta property="og:description" content="Slaži kuhinjske elemente, dobij krojnu listu, optimizaciju rezanja, listu okova i 3D prikaz sklapanja — potpuno besplatno, bez instalacije.">
+<meta property="og:url" content="https://kroj-kuhinja.vercel.app/">
+<meta property="og:locale" content="bs_BA">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KROJ — Besplatni dizajner kuhinje online">
+<meta name="twitter:description" content="Slaži kuhinjske elemente, dobij krojnu listu, optimizaciju rezanja, listu okova i 3D prikaz sklapanja.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "KROJ — Dizajner kuhinje",
+  "applicationCategory": "DesignApplication",
+  "operatingSystem": "Any (web browser)",
+  "description": "Besplatan alat za dizajn kuhinje sa automatskim generisanjem krojne liste, optimizacijom rezanja ploča, listom okova i 3D prikazom sklapanja.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+  "inLanguage": "bs"
+}
+</script>
 <style>
   :root{
     --paper:#EDEAE2;
@@ -185,6 +213,29 @@
   table.hwtbl td.name{font-family:var(--sans);}
   table.hwtbl tr.totals-row td{font-weight:700;background:#F6F3EC;}
 
+  /* ---------- Help / Uputstvo ---------- */
+  .help-wrap{max-width:760px;}
+  .help-block{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line);}
+  .help-block:last-child{border-bottom:none;}
+  .help-block h3{font-family:var(--serif);font-size:16px;color:var(--wood-dark);margin:0 0 6px;}
+  .help-block p{font-size:13px;line-height:1.65;color:var(--ink);margin:0;}
+  .help-block b{color:var(--ink);}
+
+  /* ---------- Stats ---------- */
+  .stats-grid{display:flex;gap:14px;flex-wrap:wrap;}
+  .stat-card{
+    background:#fff;border:1px solid var(--line-strong);border-radius:6px;padding:16px 20px;
+    min-width:180px;flex:1;position:relative;
+  }
+  .stat-card .stat-num{font-family:var(--serif);font-size:32px;color:var(--wood-dark);line-height:1;}
+  .stat-card .stat-lbl{font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--ink-soft);letter-spacing:.4px;margin-top:6px;}
+  .stat-card.wide{flex-basis:100%;}
+  .stat-card .stat-sub{font-size:11.5px;color:var(--ink-soft);margin-top:4px;font-family:var(--mono);}
+  .stat-badge-offline{
+    display:inline-block;font-size:10px;font-family:var(--mono);color:var(--red);
+    border:1px solid var(--red);border-radius:10px;padding:1px 8px;margin-top:6px;
+  }
+
   /* ---------- Assembly (sklapanje) ---------- */
   .asm-card{border:1px solid var(--line-strong);border-radius:6px;background:#fff;padding:16px;margin-bottom:22px;}
   .asm-head{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
@@ -346,6 +397,8 @@
       <div class="tab" data-tab="nesting">Optimizacija reza</div>
       <div class="tab" data-tab="materials">Materijali</div>
       <div class="tab" data-tab="settings">Postavke</div>
+      <div class="tab" data-tab="help">Uputstvo</div>
+      <div class="tab" data-tab="stats">Statistika</div>
     </div>
 
     <div class="tabpanel active" id="tab-layout">
@@ -408,8 +461,67 @@
         <button class="primary" style="width:auto;" id="btnSaveSettings">Sačuvaj postavke</button>
       </div>
       <footer class="disclaimer">
-        Sve se čuva samo u tvom browseru (localStorage) — aplikacija ne šalje nikakve podatke na internet i radi potpuno lokalno/offline. Koristi "Sačuvaj (JSON)" da napraviš rezervnu kopiju projekta na disku.
+        Projekat i postavke čuvaju se samo u tvom browseru (localStorage) — aplikacija ne šalje nikakve podatke o tvom projektu na internet. Jedino se, radi statistike u tabu "Statistika", šalje anonimni signal "posjeta +1" javnom brojaču (bez ikakvih ličnih ili projektnih podataka). Koristi "Sačuvaj (JSON)" da napraviš rezervnu kopiju projekta na disku.
       </footer>
+    </div>
+
+    <div class="tabpanel" id="tab-help">
+      <div class="help-wrap">
+        <h2 class="section-title" style="margin-top:0;">Kako koristiti aplikaciju</h2>
+
+        <div class="help-block">
+          <h3>1. Raspored</h3>
+          <p>Lijevo dodaješ elemente kuhinje: izabereš tip (bazni, viseći, visoki, ladičar, otvorena polica), upišeš širinu/visinu/dubinu, broj vrata i fioka, materijal i ivicu, pa klikneš "Dodaj u zid". Elementi se ređaju duž trenutnog "zida" — možeš napraviti više zidova za različite strane kuhinje (dugme "+ Novi zid").</p>
+        </div>
+
+        <div class="help-block">
+          <h3>2. Fioke sa različitim visinama</h3>
+          <p>Kad upišeš broj fioka, ispod se pojave polja za svaku fioku posebno. Upiši tačnu visinu (mm) za fioke koje želiš posebno definisati (npr. 200 za prvu, 350 za drugu), a ostavi <b>0</b> kod preostalih — one će automatski i ravnomjerno podijeliti preostali prostor.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>3. Leđa</h3>
+          <p><b>Puna leđa</b> — standardno, cijela zadnja stranica. <b>Skraćena leđa</b> — ostavlja razmak od dna (npr. 200mm) za instalacije, korisno kod elementa za sudoper zbog sifona i cijevi. <b>Bez leđa</b> — potpuno otvoren zadnji dio.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>4. Krojna lista</h3>
+          <p>Svi paneli iz svih elemenata, grupisani po materijalu, sa dimenzijama, komadima i ivicom. Izvezi kao CSV (otvara se u Excelu) ili odštampaj direktno.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>5. Sklapanje</h3>
+          <p>Providan 3D prikaz svakog elementa u sklopljenom stanju. Puna linija = dio se vidi spolja, isprekidana linija = dio je sakriven iza (leđa, dno, unutrašnje police). Brojevi na dijelovima vode u legendu i uputstvo za montažu ispod crteža.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>6. Okov</h3>
+          <p>Okvirna automatska lista šarki, konfirmat vijaka, klizača za fioke, ručki, nogu i nosača polica — na osnovu standardnih pravila struke. Prilagodi stvarnom sistemu okova koji koristiš kod dobavljača.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>7. Optimizacija reza</h3>
+          <p>Klikni "Izračunaj raspored rezanja" da vidiš kako se svi paneli slažu na standardne formate ploča, uz podešenu širinu reza (kerf) i marginu ruba. Prikazuje broj potrebnih ploča i % iskorištenosti po materijalu.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>8. Materijali i postavke</h3>
+          <p>U tabu "Materijali" možeš dodati/urediti ploče (naziv, debljina, format, da li ima smjer teksture). U "Postavkama" mijenjaš širinu reza i rub koji se odbacuje.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>Čuvanje projekta</h3>
+          <p>Sve se automatski čuva u tvom browseru. Za sigurnosnu kopiju ili prenos na drugi računar koristi "💾 Sačuvaj (JSON)" u vrhu stranice, a na drugom računaru učitaj taj fajl preko "📂 Učitaj (JSON)".</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabpanel" id="tab-stats">
+      <h2 class="section-title" style="margin-top:0;">Statistika korištenja</h2>
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="hint" style="margin-top:14px;max-width:640px;">
+        Lokalna statistika se računa iz podataka sačuvanih u tvom browseru (localStorage) i vidljiva je samo tebi. Globalni brojač posjeta je javan, anonimni servis (bez ikakvih ličnih podataka) i zahtijeva internet konekciju — ako je nedostupan, prikazaće se samo lokalni podaci.
+      </div>
     </div>
   </main>
 </div>
@@ -457,6 +569,81 @@ function currentWall(){
   return state.walls.find(w=>w.id===state.activeWall) || state.walls[0];
 }
 function matById(id){ return state.materials.find(m=>m.id===id); }
+
+/* ================= STATISTIKA (lokalna + globalna) ================= */
+const STATS_KEY = "kroj_kuhinje_stats_v1";
+// Fiksan naziv globalnog brojača (javan, besplatan servis countapi.xyz - bez registracije).
+// Svi korisnici aplikacije (na svim domenama gdje je deployana) dijele isti brojač.
+const GLOBAL_COUNTER_NS = "kroj-dizajner-kuhinje-app";
+const GLOBAL_COUNTER_KEY = "posjete";
+
+function loadStats(){
+  try{
+    const raw = localStorage.getItem(STATS_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return { firstUsed: new Date().toISOString(), sessions:0, elementsAddedTotal:0, csvExports:0, prints:0, cutOptimizations:0 };
+}
+let stats = loadStats();
+function persistStats(){ try{ localStorage.setItem(STATS_KEY, JSON.stringify(stats)); }catch(e){} }
+function bumpStat(key, by){ stats[key] = (stats[key]||0) + (by||1); persistStats(); }
+
+// Brojimo jednu posjetu (sesiju) po učitavanju stranice
+bumpStat("sessions", 1);
+
+let globalCountCache = { value:null, error:false, loading:true };
+function fetchGlobalCounter(){
+  if(typeof fetch !== "function"){
+    globalCountCache = { value:null, error:true, loading:false };
+    return;
+  }
+  try{
+    const url = `https://api.countapi.xyz/hit/${GLOBAL_COUNTER_NS}/${GLOBAL_COUNTER_KEY}`;
+    fetch(url).then(r=>{
+      if(!r.ok) throw new Error("bad response");
+      return r.json();
+    }).then(data=>{
+      globalCountCache = { value: data.value, error:false, loading:false };
+      renderStats();
+    }).catch(()=>{
+      globalCountCache = { value:null, error:true, loading:false };
+      renderStats();
+    });
+  }catch(e){
+    globalCountCache = { value:null, error:true, loading:false };
+  }
+}
+
+function fmtDate(iso){
+  try{
+    const d = new Date(iso);
+    return d.toLocaleDateString("bs-BA", { year:"numeric", month:"short", day:"numeric" });
+  }catch(e){ return "—"; }
+}
+
+function renderStats(){
+  const grid = document.getElementById("statsGrid");
+  if(!grid) return;
+  const globalCard = globalCountCache.loading
+    ? `<div class="stat-card"><div class="stat-num">…</div><div class="stat-lbl">Globalni broj korištenja</div><div class="stat-sub">Učitavanje...</div></div>`
+    : globalCountCache.error
+      ? `<div class="stat-card"><div class="stat-num">—</div><div class="stat-lbl">Globalni broj korištenja</div><span class="stat-badge-offline">nedostupno / offline</span></div>`
+      : `<div class="stat-card"><div class="stat-num">${globalCountCache.value}</div><div class="stat-lbl">Globalni broj korištenja</div><div class="stat-sub">svi korisnici, svi uređaji</div></div>`;
+
+  grid.innerHTML = `
+    ${globalCard}
+    <div class="stat-card"><div class="stat-num">${stats.sessions}</div><div class="stat-lbl">Posjeta (ovaj uređaj)</div><div class="stat-sub">od ${fmtDate(stats.firstUsed)}</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.elementsAddedTotal}</div><div class="stat-lbl">Elemenata ikad dodano</div><div class="stat-sub">kumulativno, i obrisani se broje</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.csvExports}</div><div class="stat-lbl">CSV izvoza</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.prints}</div><div class="stat-lbl">Ispisa (print)</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.cutOptimizations}</div><div class="stat-lbl">Izračuna optimizacije reza</div></div>
+    <div class="stat-card wide">
+      <div class="stat-lbl" style="margin-bottom:6px;">Trenutni projekat</div>
+      <div class="stat-sub">${state.walls.length} zid(ova) · ${state.walls.reduce((s,w)=>s+w.cabinets.length,0)} tip(ova) elemenata trenutno u projektu · ${state.materials.length} materijal(a) definisano</div>
+    </div>
+  `;
+}
+fetchGlobalCounter();
 
 /* ================= TYPE DEFAULTS ================= */
 const TYPE_DEFAULTS = {
@@ -704,6 +891,7 @@ function exportHardwareCsv(){
     });
   });
   downloadBlob(csv, "okov_lista.csv", "text/csv;charset=utf-8");
+  bumpStat("csvExports", 1);
 }
 
 /* ================= ASSEMBLY / EKSPLODIRANI PRIKAZ ================= */
@@ -1111,6 +1299,7 @@ function exportCsv(){
     csv += [mat,p.name,p.cabinetName,p.w,p.h,p.qty,p.edge].join(";") + "\n";
   });
   downloadBlob(csv, "krojna_lista.csv", "text/csv;charset=utf-8");
+  bumpStat("csvExports", 1);
 }
 
 /* ================= NESTING (optimizacija reza) ================= */
@@ -1390,6 +1579,7 @@ document.getElementById("btnAddCab").addEventListener("click", ()=>{
     document.getElementById("btnAddCab").textContent = "+ Dodaj u zid";
   } else {
     wall.cabinets.push(cab);
+    bumpStat("elementsAddedTotal", 1);
   }
   persist(); renderAll();
 });
@@ -1426,18 +1616,21 @@ document.getElementById("btnPrintList").addEventListener("click", ()=>{
   document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("print-active"));
   document.getElementById("tab-cutlist").classList.add("print-active");
   window.print();
+  bumpStat("prints", 1);
 });
 document.getElementById("btnPrintNest").addEventListener("click", ()=>{
   document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("print-active"));
   document.getElementById("tab-nesting").classList.add("print-active");
   window.print();
+  bumpStat("prints", 1);
 });
-document.getElementById("btnNest").addEventListener("click", renderNesting);
+document.getElementById("btnNest").addEventListener("click", ()=>{ renderNesting(); bumpStat("cutOptimizations", 1); });
 document.getElementById("btnHwCsv").addEventListener("click", exportHardwareCsv);
 document.getElementById("btnPrintHw").addEventListener("click", ()=>{
   document.querySelectorAll(".tabpanel").forEach(p=>p.classList.remove("print-active"));
   document.getElementById("tab-hardware").classList.add("print-active");
   window.print();
+  bumpStat("prints", 1);
 });
 
 document.getElementById("btnSaveSettings").addEventListener("click", ()=>{
@@ -1481,6 +1674,7 @@ document.querySelectorAll(".tab").forEach(tab=>{
     if(tab.dataset.tab==="nesting") renderNesting();
     if(tab.dataset.tab==="assembly") renderAssembly();
     if(tab.dataset.tab==="hardware") renderHardware();
+    if(tab.dataset.tab==="stats") renderStats();
   });
 });
 
@@ -1494,6 +1688,7 @@ function renderAll(){
   renderAssembly();
   renderHardware();
   renderMaterials();
+  renderStats();
   document.getElementById("s_kerf").value = state.settings.kerf;
   document.getElementById("s_trim").value = state.settings.trim;
 }
