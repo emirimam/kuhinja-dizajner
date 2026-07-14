@@ -11,8 +11,8 @@
 <link rel="canonical" href="https://kroj-kuhinja.vercel.app/">
 <!-- Google Search Console verifikacija (meta-tag metoda) — zamijeni SADRŽAJ ispod kodom koji ti Google da,
      nakon što u Search Console-u izabereš "HTML tag" kao metod potvrde vlasništva: -->
-<meta name="google-site-verification" content="rxATFzPkrhgsxQD6HBPlZ82laDueMDwt2T0iv7wdc1c"> 
-<!--meta name="google-site-verification" content="rxATFzPkrhgsxQD6HBPlZ82laDueMDwt2T0iv7wdc1c" /> -->
+<!-- <meta name="google-site-verification" content="ZALIJEPI_SVOJ_KOD_OVDJE"> -->
+
 <meta property="og:type" content="website">
 <meta property="og:title" content="KROJ — Besplatni dizajner kuhinje online">
 <meta property="og:description" content="Slaži kuhinjske elemente, dobij krojnu listu, optimizaciju rezanja, listu okova i 3D prikaz sklapanja — potpuno besplatno, bez instalacije.">
@@ -575,8 +575,8 @@ function matById(id){ return state.materials.find(m=>m.id===id); }
 
 /* ================= STATISTIKA (lokalna + globalna) ================= */
 const STATS_KEY = "kroj_kuhinje_stats_v1";
-// Fiksan naziv globalnog brojača (javan, besplatan servis countapi.xyz - bez registracije).
-// Svi korisnici aplikacije (na svim domenama gdje je deployana) dijele isti brojač.
+// Javni, besplatni brojač bez registracije. Svi korisnici aplikacije dijele isti ključ.
+// Primarni servis: Abacus (abacus.jasoncameron.dev). Ako ikad otkaže, koristi se rezervni servis.
 const GLOBAL_COUNTER_NS = "kroj-dizajner-kuhinje-app";
 const GLOBAL_COUNTER_KEY = "posjete";
 
@@ -594,27 +594,46 @@ function bumpStat(key, by){ stats[key] = (stats[key]||0) + (by||1); persistStats
 // Brojimo jednu posjetu (sesiju) po učitavanju stranice
 bumpStat("sessions", 1);
 
+function fetchWithTimeout(url, ms){
+  if(typeof AbortController === "function"){
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), ms);
+    return fetch(url, {signal: ctrl.signal}).finally(()=>clearTimeout(timer));
+  }
+  return fetch(url);
+}
+
 let globalCountCache = { value:null, error:false, loading:true };
 function fetchGlobalCounter(){
   if(typeof fetch !== "function"){
     globalCountCache = { value:null, error:true, loading:false };
     return;
   }
-  try{
-    const url = `https://api.countapi.xyz/hit/${GLOBAL_COUNTER_NS}/${GLOBAL_COUNTER_KEY}`;
-    fetch(url).then(r=>{
-      if(!r.ok) throw new Error("bad response");
-      return r.json();
-    }).then(data=>{
-      globalCountCache = { value: data.value, error:false, loading:false };
+  const primary = `https://abacus.jasoncameron.dev/hit/${GLOBAL_COUNTER_NS}/${GLOBAL_COUNTER_KEY}`;
+  const fallback = `https://countapi.mileshilliard.com/api/v1/hit/${GLOBAL_COUNTER_NS}_${GLOBAL_COUNTER_KEY}`;
+
+  const tryUrl = (url)=> fetchWithTimeout(url, 4000).then(r=>{
+    if(!r.ok) throw new Error("bad response");
+    return r.json();
+  });
+
+  tryUrl(primary)
+    .then(data=>{
+      globalCountCache = { value: Number(data.value), error:false, loading:false };
       renderStats();
-    }).catch(()=>{
-      globalCountCache = { value:null, error:true, loading:false };
-      renderStats();
+    })
+    .catch(()=>{
+      // primarni servis nije odgovorio na vrijeme ili je pao — pokušaj rezervni
+      tryUrl(fallback)
+        .then(data=>{
+          globalCountCache = { value: Number(data.value), error:false, loading:false };
+          renderStats();
+        })
+        .catch(()=>{
+          globalCountCache = { value:null, error:true, loading:false };
+          renderStats();
+        });
     });
-  }catch(e){
-    globalCountCache = { value:null, error:true, loading:false };
-  }
 }
 
 function fmtDate(iso){
