@@ -343,7 +343,11 @@
         <div><label>Prečnik otvora za cijev (mm)</label><input type="number" id="f_hoodDuct" value="120"></div>
         <div><label>Izvlačenje vizira (mm)</label><input type="number" id="f_hoodPullout" value="152"></div>
       </div>
-      <div class="hint">Dimenzije korpusa ispod (širina/visina/dubina) postavljene su malo veće od same nape radi lakše ugradnje — provjeri tačne dimenzije nape koju kupuješ i po potrebi ručno prilagodi.</div>
+      <div class="row2">
+        <div><label>Širina motor. dijela (mm)</label><input type="number" id="f_hoodMotorW" value="498"></div>
+        <div><label>Dubina motor. dijela (mm)</label><input type="number" id="f_hoodMotorD" value="260"></div>
+      </div>
+      <div class="hint">Motorni (gornji, uži) dio nape ulazi kroz otvor u dnu u unutrašnjost elementa i tu je sakriven — dno se gradi kao okvir (prednja/zadnja traka + bočni nosači) oko tog otvora, koji ujedno služe za pričvršćivanje nape vijcima. Provjeri tačne dimenzije nape koju kupuješ.</div>
     </div>
 
     <label>Naziv / oznaka</label>
@@ -691,14 +695,15 @@ const TYPE_DEFAULTS = {
   tall: { w:600, h:2000, d:560, doors:2, drawers:0, shelves:3, backType:"full", backGap:200 },
   drawers: { w:600, h:820, d:560, doors:0, drawers:4, shelves:0, backType:"full", backGap:200 },
   openshelf: { w:800, h:600, d:250, doors:0, drawers:0, shelves:3, backType:"none", backGap:0 },
-  hood: { w:600, h:140, d:300, doors:0, drawers:0, shelves:0, backType:"none", backGap:0, hoodDuct:120, hoodPullout:152 }
+  hood: { w:600, h:140, d:320, doors:0, drawers:0, shelves:0, backType:"none", backGap:0, hoodDuct:120, hoodPullout:152, hoodMotorW:498, hoodMotorD:260 }
 };
 const TYPE_LABEL = { base:"Bazni", wall:"Viseći", tall:"Visoki", drawers:"Ladičar", openshelf:"Otvorena polica", hood:"Element za napu" };
 
-// Standardne (okvirne) veličine ugradbenih napa — širina korpusa je nešto veća od nape radi tolerancije ugradnje
+// Standardne (okvirne) veličine ugradbenih napa — širina korpusa je nešto veća od nape radi tolerancije ugradnje.
+// motorW/motorD = dimenzije gornjeg (užeg) motorskog dijela nape koji ulazi kroz otvor u dnu, u unutrašnjost elementa.
 const HOOD_PRESETS = {
-  "60": { w:600, d:300, h:140, duct:120, pullout:152 },
-  "90": { w:900, d:300, h:140, duct:150, pullout:152 }
+  "60": { w:600, d:320, h:140, duct:120, pullout:152, motorW:498, motorD:260 },
+  "90": { w:900, d:320, h:140, duct:150, pullout:152, motorW:798, motorD:260 }
 };
 
 // Raspoređuje visine fioka: eksplicitne vrijednosti (>0) se koriste kao zadate,
@@ -752,7 +757,16 @@ function generatePanels(cab, wallName){
     push("Pod-gornjica (nosač)", W-2*t, 100, 2, mat, "bez ivice");
   } else if(cab.type === "hood"){
     push("Gornjica (otvor Ø"+(cab.hoodDuct||120)+"mm za cijev)", W-2*t, D, 1, mat, "bez ivice");
-    // nema dna - donji dio ostaje otvoren radi ugradnje i servisiranja nape
+    // Dno se gradi kao okvir oko otvora kroz koji ulazi motorski dio nape (skriven u unutrašnjosti),
+    // umjesto jedne ploče sa velikim izrezanim otvorom - lakše za izradu i daje mjesto za fiksiranje nape.
+    const Wi = W-2*t;
+    const motorW = Math.max(60, Math.min(cab.hoodMotorW||498, Wi-40));
+    const motorD = Math.max(60, Math.min(cab.hoodMotorD||260, D-40));
+    const frontBackStrip = Math.max(20, (D-motorD)/2);
+    const sideStrip = Math.max(20, (Wi-motorW)/2);
+    push("Dno - prednja traka (uz otvor za napu)", Wi, frontBackStrip, 1, mat, "1 dužu stranu");
+    push("Dno - zadnja traka (uz otvor za napu)", Wi, frontBackStrip, 1, mat, "bez ivice");
+    push("Nosač za fiksiranje nape (bočni)", motorD, sideStrip, 2, mat, "bez ivice");
   } else {
     // wall & tall: full top+bottom
     push("Gornjica", W-2*t, D, 1, mat, "bez ivice");
@@ -843,6 +857,17 @@ function computeCabinetHardware(cab){
     return items;
   }
 
+  if(cab.type === 'hood'){
+    add("Konfirmat vijak (gornjica u bočnice)", 4);
+    add("Konfirmat vijak (prednja/zadnja traka dna)", 8);
+    add("Vijak za bočne nosače dna (fiksiranje)", 6);
+    add("Vijak za fiksiranje nape u korpus", 6);
+    add("Vijak + tipl za montažu elementa na zid", 4);
+    const backType = cab.backType || 'none';
+    if(backType !== 'none') add("Spajalica za leđa (HDF)", 12);
+    return items;
+  }
+
   const doors = cab.doors||0, drawers = cab.drawers||0;
   const totalFrontH = H-4;
   const drawerZoneH = (doors>0 && drawers>0) ? Math.round(totalFrontH*0.28) : (drawers>0 ? totalFrontH : 0);
@@ -861,7 +886,6 @@ function computeCabinetHardware(cab){
   let panelJoints = 0; // broj punih panela koji se spajaju na obje bočnice
   if(cab.type === 'base' || cab.type === 'drawers') panelJoints = 3; // dno + 2x pod-gornjica
   else if(cab.type === 'tall' || cab.type === 'wall') panelJoints = 2; // gornjica + dno
-  else if(cab.type === 'hood') panelJoints = 1; // samo gornjica
   add("Konfirmat vijak (korpus)", panelJoints*2*2);
 
   // Nosači/tiple za police (unutrašnje, ne otvorena polica)
@@ -876,7 +900,7 @@ function computeCabinetHardware(cab){
   if(cab.type==='base' || cab.type==='drawers' || cab.type==='tall') add("Noga (podesiva plastična/metalna)", 4);
 
   // Vijci za montažu visećih elemenata na zid
-  if(cab.type==='wall' || cab.type==='hood') add("Vijak + tipl za montažu na zid", 4);
+  if(cab.type==='wall') add("Vijak + tipl za montažu na zid", 4);
 
   return items;
 }
@@ -985,7 +1009,15 @@ function generateAssemblyParts(cab){
     add("Pod-gornjica zadnja", 'y', {x:[t,W-t], y:[H-t,H], z:[0,100]}, true, 'top');
   } else if(cab.type === 'hood'){
     add("Gornjica (otvor za cijev)", 'y', {x:[t,W-t], y:[H-t,H], z:[0,D]}, true, 'top');
-    // nema dna
+    const Wi = W-2*t;
+    const motorW = Math.max(60, Math.min(cab.hoodMotorW||498, Wi-40));
+    const motorD = Math.max(60, Math.min(cab.hoodMotorD||260, D-40));
+    const fb = Math.max(20, (D-motorD)/2);
+    const sd = Math.max(20, (Wi-motorW)/2);
+    add("Dno - prednja traka", 'y', {x:[t,W-t], y:[0,t], z:[0,fb]}, false, 'bottom');
+    add("Dno - zadnja traka", 'y', {x:[t,W-t], y:[0,t], z:[D-fb,D]}, false, 'bottom');
+    add("Nosač (lijevi)", 'y', {x:[t,t+sd], y:[0,t], z:[fb,D-fb]}, false, 'bottom');
+    add("Nosač (desni)", 'y', {x:[W-t-sd,W-t], y:[0,t], z:[fb,D-fb]}, false, 'bottom');
   } else {
     add("Gornjica", 'y', {x:[t,W-t], y:[H-t,H], z:[0,D]}, true, 'top');
     add("Dno", 'y', {x:[t,W-t], y:[0,t], z:[0,D]}, false, 'bottom');
@@ -1115,10 +1147,12 @@ function assemblySteps(cab){
     return steps;
   }
   if(cab.type === 'hood'){
-    steps.push(`Spoji obje bočnice sa gornjicom (konfirmat vijci) — donji dio ostaje otvoren radi ugradnje nape.`);
-    steps.push(`Izbuši otvor Ø${cab.hoodDuct||120}mm u gornjici (ili na mjestu predviđenom za izlaz cijevi) za odzračni kanal.`);
+    steps.push(`Spoji obje bočnice sa gornjicom (konfirmat vijci).`);
+    steps.push(`Montiraj prednju i zadnju traku dna, te oba bočna nosača — oni formiraju otvor u dnu kroz koji ulazi motorski (gornji, uži) dio nape, i ujedno su mjesto za njeno pričvršćivanje.`);
+    steps.push(`Izbuši otvor Ø${cab.hoodDuct||120}mm u gornjici za odzračni kanal.`);
     steps.push(`Montiraj element na zid iznad ploče za kuhanje, na propisanoj visini prema uputstvu proizvođača nape.`);
-    steps.push(`Umetni napu odozdo u korpus i pričvrsti je prema uputstvu proizvođača (obično kroz gornjicu ili bočnice).`);
+    steps.push(`Provuci napu odozdo kroz otvor u dnu — motorski dio ulazi u unutrašnjost elementa i tu je sakriven, a ravni dio sa vizirom ostaje vidljiv ispod elementa.`);
+    steps.push(`Pričvrsti napu vijcima kroz bočne nosače i/ili prednju/zadnju traku dna, prema uputstvu proizvođača.`);
     steps.push(`Priključi odzračnu cijev (Ø${cab.hoodDuct||120}mm) i provjeri izvlačenje vizira (${cab.hoodPullout||152}mm).`);
     return steps;
   }
@@ -1262,6 +1296,8 @@ function fillFormForEdit(c){
   document.getElementById("f_hoodPreset").value = "custom";
   document.getElementById("f_hoodDuct").value = c.hoodDuct != null ? c.hoodDuct : 120;
   document.getElementById("f_hoodPullout").value = c.hoodPullout != null ? c.hoodPullout : 152;
+  document.getElementById("f_hoodMotorW").value = c.hoodMotorW != null ? c.hoodMotorW : 498;
+  document.getElementById("f_hoodMotorD").value = c.hoodMotorD != null ? c.hoodMotorD : 260;
   toggleTypeFields();
   document.getElementById("f_mat").value = c.material;
   document.getElementById("f_frontmat").value = c.frontMat;
@@ -1586,6 +1622,8 @@ function applyHoodPreset(){
   document.getElementById("f_d").value = p.d;
   document.getElementById("f_hoodDuct").value = p.duct;
   document.getElementById("f_hoodPullout").value = p.pullout;
+  document.getElementById("f_hoodMotorW").value = p.motorW;
+  document.getElementById("f_hoodMotorD").value = p.motorD;
 }
 document.getElementById("f_hoodPreset").addEventListener("change", applyHoodPreset);
 
@@ -1606,6 +1644,8 @@ document.getElementById("f_type").addEventListener("change", (e)=>{
     document.getElementById("f_hoodPreset").value = "60";
     document.getElementById("f_hoodDuct").value = d.hoodDuct;
     document.getElementById("f_hoodPullout").value = d.hoodPullout;
+    document.getElementById("f_hoodMotorW").value = d.hoodMotorW;
+    document.getElementById("f_hoodMotorD").value = d.hoodMotorD;
     applyHoodPreset();
   }
 });
@@ -1661,6 +1701,8 @@ document.getElementById("btnAddCab").addEventListener("click", ()=>{
     backGap: Number(document.getElementById("f_backgap").value),
     hoodDuct: Number(document.getElementById("f_hoodDuct").value)||120,
     hoodPullout: Number(document.getElementById("f_hoodPullout").value)||152,
+    hoodMotorW: Number(document.getElementById("f_hoodMotorW").value)||498,
+    hoodMotorD: Number(document.getElementById("f_hoodMotorD").value)||260,
     material: document.getElementById("f_mat").value,
     frontMat: document.getElementById("f_frontmat").value,
     edge: document.getElementById("f_edge").value,
