@@ -329,7 +329,22 @@
       <option value="tall">Visoki (stubac)</option>
       <option value="drawers">Ladičar (komoda za fioke)</option>
       <option value="openshelf">Otvorena viseća polica</option>
+      <option value="hood">Element za napu (ugradbena)</option>
     </select>
+
+    <div id="f_hoodWrap" style="display:none;">
+      <label>Veličina nape</label>
+      <select id="f_hoodPreset">
+        <option value="60">60 cm (standardna, Ø120mm cijev)</option>
+        <option value="90">90 cm (standardna, Ø150mm cijev)</option>
+        <option value="custom">Prilagođeno (unesi ručno ispod)</option>
+      </select>
+      <div class="row2">
+        <div><label>Prečnik otvora za cijev (mm)</label><input type="number" id="f_hoodDuct" value="120"></div>
+        <div><label>Izvlačenje vizira (mm)</label><input type="number" id="f_hoodPullout" value="152"></div>
+      </div>
+      <div class="hint">Dimenzije korpusa ispod (širina/visina/dubina) postavljene su malo veće od same nape radi lakše ugradnje — provjeri tačne dimenzije nape koju kupuješ i po potrebi ručno prilagodi.</div>
+    </div>
 
     <label>Naziv / oznaka</label>
     <input type="text" id="f_name" placeholder="npr. D1">
@@ -340,13 +355,15 @@
       <div><label>Dubina (mm)</label><input type="number" id="f_d" value="560"></div>
     </div>
 
-    <div class="row2">
-      <div><label>Broj vrata</label><input type="number" id="f_doors" value="1" min="0"></div>
-      <div><label>Broj fioka</label><input type="number" id="f_drawers" value="0" min="0"></div>
-    </div>
-    <div class="checkrow">
-      <input type="checkbox" id="f_detdraw">
-      <label for="f_detdraw">Detaljna kutija fioke (bočnice/dno/leđa fioke)</label>
+    <div id="f_doorDrawerWrap">
+      <div class="row2">
+        <div><label>Broj vrata</label><input type="number" id="f_doors" value="1" min="0"></div>
+        <div><label>Broj fioka</label><input type="number" id="f_drawers" value="0" min="0"></div>
+      </div>
+      <div class="checkrow">
+        <input type="checkbox" id="f_detdraw">
+        <label for="f_detdraw">Detaljna kutija fioke (bočnice/dno/leđa fioke)</label>
+      </div>
     </div>
     <div id="f_drawerHeightsWrap" style="display:none;">
       <label>Visine fioka (mm) — 0 = popuni ostatak</label>
@@ -673,9 +690,16 @@ const TYPE_DEFAULTS = {
   wall: { w:600, h:720, d:300, doors:1, drawers:0, shelves:1, backType:"full", backGap:200 },
   tall: { w:600, h:2000, d:560, doors:2, drawers:0, shelves:3, backType:"full", backGap:200 },
   drawers: { w:600, h:820, d:560, doors:0, drawers:4, shelves:0, backType:"full", backGap:200 },
-  openshelf: { w:800, h:600, d:250, doors:0, drawers:0, shelves:3, backType:"none", backGap:0 }
+  openshelf: { w:800, h:600, d:250, doors:0, drawers:0, shelves:3, backType:"none", backGap:0 },
+  hood: { w:600, h:140, d:300, doors:0, drawers:0, shelves:0, backType:"none", backGap:0, hoodDuct:120, hoodPullout:152 }
 };
-const TYPE_LABEL = { base:"Bazni", wall:"Viseći", tall:"Visoki", drawers:"Ladičar", openshelf:"Otvorena polica" };
+const TYPE_LABEL = { base:"Bazni", wall:"Viseći", tall:"Visoki", drawers:"Ladičar", openshelf:"Otvorena polica", hood:"Element za napu" };
+
+// Standardne (okvirne) veličine ugradbenih napa — širina korpusa je nešto veća od nape radi tolerancije ugradnje
+const HOOD_PRESETS = {
+  "60": { w:600, d:300, h:140, duct:120, pullout:152 },
+  "90": { w:900, d:300, h:140, duct:150, pullout:152 }
+};
 
 // Raspoređuje visine fioka: eksplicitne vrijednosti (>0) se koriste kao zadate,
 // a preostale (0 = "popuni ostatak") ravnomjerno dijele preostali prostor.
@@ -726,6 +750,9 @@ function generatePanels(cab, wallName){
   if(cab.type === "base" || cab.type === "drawers"){
     push("Dno", W-2*t, D, 1, mat, "1 dužu stranu");
     push("Pod-gornjica (nosač)", W-2*t, 100, 2, mat, "bez ivice");
+  } else if(cab.type === "hood"){
+    push("Gornjica (otvor Ø"+(cab.hoodDuct||120)+"mm za cijev)", W-2*t, D, 1, mat, "bez ivice");
+    // nema dna - donji dio ostaje otvoren radi ugradnje i servisiranja nape
   } else {
     // wall & tall: full top+bottom
     push("Gornjica", W-2*t, D, 1, mat, "bez ivice");
@@ -834,6 +861,7 @@ function computeCabinetHardware(cab){
   let panelJoints = 0; // broj punih panela koji se spajaju na obje bočnice
   if(cab.type === 'base' || cab.type === 'drawers') panelJoints = 3; // dno + 2x pod-gornjica
   else if(cab.type === 'tall' || cab.type === 'wall') panelJoints = 2; // gornjica + dno
+  else if(cab.type === 'hood') panelJoints = 1; // samo gornjica
   add("Konfirmat vijak (korpus)", panelJoints*2*2);
 
   // Nosači/tiple za police (unutrašnje, ne otvorena polica)
@@ -848,7 +876,7 @@ function computeCabinetHardware(cab){
   if(cab.type==='base' || cab.type==='drawers' || cab.type==='tall') add("Noga (podesiva plastična/metalna)", 4);
 
   // Vijci za montažu visećih elemenata na zid
-  if(cab.type==='wall') add("Vijak + tipl za montažu na zid", 4);
+  if(cab.type==='wall' || cab.type==='hood') add("Vijak + tipl za montažu na zid", 4);
 
   return items;
 }
@@ -955,6 +983,9 @@ function generateAssemblyParts(cab){
     add("Dno", 'y', {x:[t,W-t], y:[0,t], z:[0,D]}, false, 'bottom');
     add("Pod-gornjica prednja", 'y', {x:[t,W-t], y:[H-t,H], z:[D-100,D]}, true, 'top');
     add("Pod-gornjica zadnja", 'y', {x:[t,W-t], y:[H-t,H], z:[0,100]}, true, 'top');
+  } else if(cab.type === 'hood'){
+    add("Gornjica (otvor za cijev)", 'y', {x:[t,W-t], y:[H-t,H], z:[0,D]}, true, 'top');
+    // nema dna
   } else {
     add("Gornjica", 'y', {x:[t,W-t], y:[H-t,H], z:[0,D]}, true, 'top');
     add("Dno", 'y', {x:[t,W-t], y:[0,t], z:[0,D]}, false, 'bottom');
@@ -1081,6 +1112,14 @@ function assemblySteps(cab){
     steps.push(`Obilježi na zidu ${shelfQty} vodoravn(e/ih) linij(e) razmaknutih po visini elementa i provjeri libelom.`);
     steps.push(`Učvrsti zidne nosače (2 po polici) u zidne tiple/moždanike.`);
     steps.push(`Postavi ${shelfQty} dask(u/e) police na nosače i po potrebi fiksiraj odozdo vijkom.`);
+    return steps;
+  }
+  if(cab.type === 'hood'){
+    steps.push(`Spoji obje bočnice sa gornjicom (konfirmat vijci) — donji dio ostaje otvoren radi ugradnje nape.`);
+    steps.push(`Izbuši otvor Ø${cab.hoodDuct||120}mm u gornjici (ili na mjestu predviđenom za izlaz cijevi) za odzračni kanal.`);
+    steps.push(`Montiraj element na zid iznad ploče za kuhanje, na propisanoj visini prema uputstvu proizvođača nape.`);
+    steps.push(`Umetni napu odozdo u korpus i pričvrsti je prema uputstvu proizvođača (obično kroz gornjicu ili bočnice).`);
+    steps.push(`Priključi odzračnu cijev (Ø${cab.hoodDuct||120}mm) i provjeri izvlačenje vizira (${cab.hoodPullout||152}mm).`);
     return steps;
   }
   const anchorTop = cab.type==='base' ? "pod-gornjicama" : "gornjicom";
@@ -1220,6 +1259,10 @@ function fillFormForEdit(c){
   document.getElementById("f_backtype").value = c.backType || "full";
   document.getElementById("f_backgap").value = c.backGap != null ? c.backGap : 200;
   toggleBackGap();
+  document.getElementById("f_hoodPreset").value = "custom";
+  document.getElementById("f_hoodDuct").value = c.hoodDuct != null ? c.hoodDuct : 120;
+  document.getElementById("f_hoodPullout").value = c.hoodPullout != null ? c.hoodPullout : 152;
+  toggleTypeFields();
   document.getElementById("f_mat").value = c.material;
   document.getElementById("f_frontmat").value = c.frontMat;
   document.getElementById("f_edge").value = c.edge;
@@ -1526,6 +1569,26 @@ function downloadBlob(content, filename, type){
 }
 
 /* ================= EVENTS ================= */
+function toggleTypeFields(){
+  const type = document.getElementById("f_type").value;
+  document.getElementById("f_hoodWrap").style.display = type === "hood" ? "block" : "none";
+  document.getElementById("f_doorDrawerWrap").style.display = (type === "hood" || type === "openshelf") ? "none" : "block";
+  document.getElementById("f_shelvesWrap").style.display = (type === "hood" || type === "openshelf") ? "none" : "block";
+}
+
+function applyHoodPreset(){
+  const val = document.getElementById("f_hoodPreset").value;
+  if(val === "custom") return;
+  const p = HOOD_PRESETS[val];
+  if(!p) return;
+  document.getElementById("f_w").value = p.w;
+  document.getElementById("f_h").value = p.h;
+  document.getElementById("f_d").value = p.d;
+  document.getElementById("f_hoodDuct").value = p.duct;
+  document.getElementById("f_hoodPullout").value = p.pullout;
+}
+document.getElementById("f_hoodPreset").addEventListener("change", applyHoodPreset);
+
 document.getElementById("f_type").addEventListener("change", (e)=>{
   const d = TYPE_DEFAULTS[e.target.value];
   document.getElementById("f_w").value = d.w;
@@ -1537,7 +1600,14 @@ document.getElementById("f_type").addEventListener("change", (e)=>{
   document.getElementById("f_backtype").value = d.backType;
   document.getElementById("f_backgap").value = d.backGap;
   toggleBackGap();
+  toggleTypeFields();
   renderDrawerHeightInputs(d.drawers, []);
+  if(e.target.value === "hood"){
+    document.getElementById("f_hoodPreset").value = "60";
+    document.getElementById("f_hoodDuct").value = d.hoodDuct;
+    document.getElementById("f_hoodPullout").value = d.hoodPullout;
+    applyHoodPreset();
+  }
 });
 
 function toggleBackGap(){
@@ -1589,6 +1659,8 @@ document.getElementById("btnAddCab").addEventListener("click", ()=>{
     shelves: Number(document.getElementById("f_shelves").value),
     backType: document.getElementById("f_backtype").value,
     backGap: Number(document.getElementById("f_backgap").value),
+    hoodDuct: Number(document.getElementById("f_hoodDuct").value)||120,
+    hoodPullout: Number(document.getElementById("f_hoodPullout").value)||152,
     material: document.getElementById("f_mat").value,
     frontMat: document.getElementById("f_frontmat").value,
     edge: document.getElementById("f_edge").value,
@@ -1715,6 +1787,7 @@ function renderAll(){
   document.getElementById("s_trim").value = state.settings.trim;
 }
 renderAll();
+toggleTypeFields();
 
 })();
 </script>
