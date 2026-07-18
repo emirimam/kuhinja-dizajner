@@ -155,7 +155,7 @@
   .wall-title{font-family:var(--serif);font-size:19px;margin-bottom:4px;}
   .wall-meta{font-family:var(--mono);font-size:12px;color:var(--ink-soft);margin-bottom:16px;}
   .floorstrip{
-    background:#fff;border:1px solid var(--line-strong);border-radius:6px;padding:30px 20px 46px;
+    background:#fff;border:1px solid var(--line-strong);border-radius:6px;padding:44px 20px 46px;
     position:relative;min-height:230px;overflow-x:auto;
   }
   .floorrow{display:flex;align-items:flex-end;gap:2px;min-width:max-content;}
@@ -170,8 +170,11 @@
     padding-bottom:4px;pointer-events:none;user-select:none;
   }
   .cabblock .dim-top{
-    position:absolute;top:-20px;left:0;right:0;text-align:center;font-family:var(--mono);
-    font-size:10px;color:var(--blue);pointer-events:none;
+    position:absolute;top:-32px;left:-6px;right:-6px;text-align:center;font-family:var(--mono);
+    font-size:9.5px;color:var(--blue);pointer-events:none;line-height:1.4;white-space:nowrap;
+  }
+  .cabblock .dim-depth{
+    display:block;color:var(--wood-dark);
   }
   .cabblock.dragging{opacity:.4;}
   .cabblock .doorlines{position:absolute;inset:4px;display:flex;gap:1px;pointer-events:none;}
@@ -282,6 +285,9 @@
     font-size:12px;color:var(--ink-soft);line-height:1.5;max-width:760px;
   }
 
+  body[data-lang="bs"] .lang-en{display:none !important;}
+  body[data-lang="en"] .lang-bs{display:none !important;}
+
   @media print{
     header,aside,.tabs,.toolbar,.topbtns{display:none !important;}
     .shell{grid-template-columns:1fr;}
@@ -301,201 +307,201 @@
 <header>
   <div class="brand">
     <div class="mark">KROJ<span>·</span></div>
-    <div class="sub">DIZAJNER KUHINJE — KROJNA LISTA</div>
+    <div class="sub" data-i18n="brand_sub">DIZAJNER KUHINJE — KROJNA LISTA</div>
   </div>
   <div class="topbtns">
-    <button id="btnSave">💾 Sačuvaj (JSON)</button>
-    <button id="btnLoad">📂 Učitaj (JSON)</button>
+    <button id="btnSave" data-i18n="btn_save">💾 Sačuvaj (JSON)</button>
+    <button id="btnLoad" data-i18n="btn_load">📂 Učitaj (JSON)</button>
     <input type="file" id="fileLoad" accept=".json" style="display:none;">
-    <button id="btnReset">🗑 Novi projekat</button>
+    <button id="btnReset" data-i18n="btn_reset">🗑 Novi projekat</button>
+    <button id="btnLang">🌐 EN</button>
   </div>
 </header>
 
 <div class="shell">
   <aside>
-    <h2 class="section-title">Zid / red elemenata</h2>
+    <h2 class="section-title" data-i18n="sec_wall">Zid / red elemenata</h2>
     <div class="wall-select" id="wallSelect"></div>
     <div style="display:flex;gap:6px;">
-      <button class="ghost" id="btnAddWall" style="flex:1;">+ Novi zid</button>
-      <button class="ghost" id="btnRenWall">Preimenuj</button>
-      <button class="ghost" id="btnDelWall">Obriši</button>
+      <button class="ghost" id="btnAddWall" style="flex:1;" data-i18n="btn_addwall">+ Novi zid</button>
+      <button class="ghost" id="btnRenWall" data-i18n="btn_renwall">Preimenuj</button>
+      <button class="ghost" id="btnDelWall" data-i18n="btn_delwall">Obriši</button>
     </div>
 
-    <h2 class="section-title">Dodaj element</h2>
-    <label>Tip ormarića</label>
+    <h2 class="section-title" data-i18n="sec_addelement">Dodaj element</h2>
+    <label data-i18n="lbl_type">Tip ormarića</label>
     <select id="f_type">
-      <option value="base">Bazni (donji)</option>
-      <option value="wall">Viseći (gornji)</option>
-      <option value="tall">Visoki (stubac)</option>
-      <option value="drawers">Ladičar (komoda za fioke)</option>
-      <option value="openshelf">Otvorena viseća polica</option>
-      <option value="hood">Element za napu (ugradbena)</option>
+      <option value="base" data-i18n="type_base">Bazni (donji)</option>
+      <option value="wall" data-i18n="type_wall">Viseći (gornji)</option>
+      <option value="tall" data-i18n="type_tall">Visoki (stubac)</option>
+      <option value="drawers" data-i18n="type_drawers">Ladičar (komoda za fioke)</option>
+      <option value="openshelf" data-i18n="type_openshelf">Otvorena viseća polica</option>
+      <option value="hood" data-i18n="type_hood">Element za napu (ugradbena)</option>
     </select>
 
     <div id="f_hoodWrap" style="display:none;">
-      <label>Veličina nape</label>
+      <label data-i18n="lbl_hoodsize">Veličina nape</label>
       <select id="f_hoodPreset">
-        <option value="60">60 cm (standardna, Ø120mm cijev)</option>
-        <option value="90">90 cm (standardna, Ø150mm cijev)</option>
-        <option value="custom">Prilagođeno (unesi ručno ispod)</option>
+        <option value="60" data-i18n="hood_60">60 cm (standardna, Ø120mm cijev)</option>
+        <option value="90" data-i18n="hood_90">90 cm (standardna, Ø150mm cijev)</option>
+        <option value="custom" data-i18n="hood_custom">Prilagođeno (unesi ručno ispod)</option>
       </select>
       <div class="row2">
-        <div><label>Prečnik otvora za cijev (mm)</label><input type="number" id="f_hoodDuct" value="120"></div>
-        <div><label>Izvlačenje vizira (mm)</label><input type="number" id="f_hoodPullout" value="152"></div>
+        <div><label data-i18n="lbl_duct">Prečnik otvora za cijev (mm)</label><input type="number" id="f_hoodDuct" value="120"></div>
+        <div><label data-i18n="lbl_pullout">Izvlačenje vizira (mm)</label><input type="number" id="f_hoodPullout" value="152"></div>
       </div>
       <div class="row2">
-        <div><label>Širina motor. dijela (mm)</label><input type="number" id="f_hoodMotorW" value="498"></div>
-        <div><label>Dubina motor. dijela (mm)</label><input type="number" id="f_hoodMotorD" value="260"></div>
+        <div><label data-i18n="lbl_motorw">Širina motor. dijela (mm)</label><input type="number" id="f_hoodMotorW" value="498"></div>
+        <div><label data-i18n="lbl_motord">Dubina motor. dijela (mm)</label><input type="number" id="f_hoodMotorD" value="260"></div>
       </div>
-      <div class="hint">Motorni (gornji, uži) dio nape ulazi kroz otvor u dnu u unutrašnjost elementa i tu je sakriven — dno se gradi kao okvir (prednja/zadnja traka + bočni nosači) oko tog otvora, koji ujedno služe za pričvršćivanje nape vijcima. Provjeri tačne dimenzije nape koju kupuješ.</div>
+      <div class="hint" data-i18n="hint_hood">Motorni (gornji, uži) dio nape ulazi kroz otvor u dnu u unutrašnjost elementa i tu je sakriven — dno se gradi kao okvir (prednja/zadnja traka + bočni nosači) oko tog otvora, koji ujedno služe za pričvršćivanje nape vijcima. Provjeri tačne dimenzije nape koju kupuješ.</div>
     </div>
 
-    <label>Naziv / oznaka</label>
-    <input type="text" id="f_name" placeholder="npr. D1">
+    <label data-i18n="lbl_name">Naziv / oznaka</label>
+    <input type="text" id="f_name" placeholder="npr. D1" data-i18n-ph="ph_name">
 
     <div class="row3">
-      <div><label>Širina (mm)</label><input type="number" id="f_w" value="600"></div>
-      <div><label>Visina (mm)</label><input type="number" id="f_h" value="820"></div>
-      <div><label>Dubina (mm)</label><input type="number" id="f_d" value="560"></div>
+      <div><label data-i18n="lbl_width">Širina (mm)</label><input type="number" id="f_w" value="600"></div>
+      <div><label data-i18n="lbl_height">Visina (mm)</label><input type="number" id="f_h" value="820"></div>
+      <div><label data-i18n="lbl_depth">Dubina (mm)</label><input type="number" id="f_d" value="560"></div>
     </div>
 
     <div id="f_doorDrawerWrap">
       <div class="row2">
-        <div><label>Broj vrata</label><input type="number" id="f_doors" value="1" min="0"></div>
-        <div><label>Broj fioka</label><input type="number" id="f_drawers" value="0" min="0"></div>
+        <div><label data-i18n="lbl_doors">Broj vrata</label><input type="number" id="f_doors" value="1" min="0"></div>
+        <div><label data-i18n="lbl_drawers">Broj fioka</label><input type="number" id="f_drawers" value="0" min="0"></div>
       </div>
       <div class="checkrow">
         <input type="checkbox" id="f_detdraw">
-        <label for="f_detdraw">Detaljna kutija fioke (bočnice/dno/leđa fioke)</label>
+        <label for="f_detdraw" data-i18n="chk_detdraw">Detaljna kutija fioke (bočnice/dno/leđa fioke)</label>
       </div>
     </div>
     <div id="f_drawerHeightsWrap" style="display:none;">
-      <label>Visine fioka (mm) — 0 = popuni ostatak</label>
+      <label data-i18n="lbl_drawerheights">Visine fioka (mm) — 0 = popuni ostatak</label>
       <div id="f_drawerHeightsList"></div>
-      <div class="hint">Npr. upiši 200 za prvu, 350 za drugu fioku, a ostavi 0 kod preostalih da automatski ravnomjerno popune ostatak visine.</div>
+      <div class="hint" data-i18n="hint_drawerheights">Npr. upiši 200 za prvu, 350 za drugu fioku, a ostavi 0 kod preostalih da automatski ravnomjerno popune ostatak visine.</div>
     </div>
     <div id="f_shelvesWrap">
-      <label>Broj polica</label>
+      <label data-i18n="lbl_shelves">Broj polica</label>
       <input type="number" id="f_shelves" value="1" min="0">
     </div>
 
-    <label>Leđa</label>
+    <label data-i18n="lbl_back">Leđa</label>
     <select id="f_backtype">
-      <option value="full">Puna leđa</option>
-      <option value="short">Skraćena leđa (razmak od dna)</option>
-      <option value="none">Bez leđa (potpuno otvoreno)</option>
+      <option value="full" data-i18n="back_full">Puna leđa</option>
+      <option value="short" data-i18n="back_short">Skraćena leđa (razmak od dna)</option>
+      <option value="none" data-i18n="back_none">Bez leđa (potpuno otvoreno)</option>
     </select>
     <div id="f_backgapWrap" style="display:none;">
-      <label>Razmak od dna (mm)</label>
+      <label data-i18n="lbl_backgap">Razmak od dna (mm)</label>
       <input type="number" id="f_backgap" value="200">
-      <div class="hint">Npr. kod elementa za sudoper ostavi prostor ispod leđa za sifon i cijevi.</div>
+      <div class="hint" data-i18n="hint_backgap">Npr. kod elementa za sudoper ostavi prostor ispod leđa za sifon i cijevi.</div>
     </div>
 
-    <label>Materijal korpusa</label>
+    <label data-i18n="lbl_matcorpus">Materijal korpusa</label>
     <select id="f_mat"></select>
-    <label>Materijal fronte</label>
+    <label data-i18n="lbl_matfront">Materijal fronte</label>
     <select id="f_frontmat"></select>
-    <label>Ivica (fronte / vidljive ivice)</label>
+    <label data-i18n="lbl_edge">Ivica (fronte / vidljive ivice)</label>
     <select id="f_edge">
-      <option>ABS 0.4mm</option>
-      <option>ABS 2mm</option>
-      <option>bez ivice</option>
+      <option data-i18n="edge_04">ABS 0.4mm</option>
+      <option data-i18n="edge_2">ABS 2mm</option>
+      <option data-i18n="edge_none">bez ivice</option>
     </select>
 
-    <label>Količina istih ormarića</label>
+    <label data-i18n="lbl_qty">Količina istih ormarića</label>
     <input type="number" id="f_qty" value="1" min="1">
 
-    <button class="primary" id="btnAddCab">+ Dodaj u zid</button>
+    <button class="primary" id="btnAddCab" data-i18n="btn_addcab">+ Dodaj u zid</button>
     <input type="hidden" id="f_editId">
 
-    <h2 class="section-title">Elementi u zidu</h2>
+    <h2 class="section-title" data-i18n="sec_cablist">Elementi u zidu</h2>
     <div id="cabList"></div>
   </aside>
 
   <main>
     <div class="tabs">
-      <div class="tab active" data-tab="layout">Raspored</div>
-      <div class="tab" data-tab="cutlist">Krojna lista</div>
-      <div class="tab" data-tab="assembly">Sklapanje</div>
-      <div class="tab" data-tab="hardware">Okov</div>
-      <div class="tab" data-tab="nesting">Optimizacija reza</div>
-      <div class="tab" data-tab="materials">Materijali</div>
-      <div class="tab" data-tab="settings">Postavke</div>
-      <div class="tab" data-tab="help">Uputstvo</div>
-      <div class="tab" data-tab="stats">Statistika</div>
+      <div class="tab active" data-tab="layout" data-i18n="tab_layout">Raspored</div>
+      <div class="tab" data-tab="cutlist" data-i18n="tab_cutlist">Krojna lista</div>
+      <div class="tab" data-tab="assembly" data-i18n="tab_assembly">Sklapanje</div>
+      <div class="tab" data-tab="hardware" data-i18n="tab_hardware">Okov</div>
+      <div class="tab" data-tab="nesting" data-i18n="tab_nesting">Optimizacija reza</div>
+      <div class="tab" data-tab="materials" data-i18n="tab_materials">Materijali</div>
+      <div class="tab" data-tab="settings" data-i18n="tab_settings">Postavke</div>
+      <div class="tab" data-tab="help" data-i18n="tab_help">Uputstvo</div>
+      <div class="tab" data-tab="stats" data-i18n="tab_stats">Statistika</div>
     </div>
 
     <div class="tabpanel active" id="tab-layout">
       <div class="wall-title" id="layoutWallName">—</div>
       <div class="wall-meta" id="layoutWallMeta">—</div>
       <div class="floorstrip"><div class="floorrow" id="floorRow"></div></div>
-      <footer class="disclaimer">
-        Prikaz je pojednostavljen tlocrt (pogled odozgo/spreda, elementi poslagani u nizu duž zida). Za realan raspored more zidova/ćoškove koristi zasebne "zidove" iz lijevog panela.
+      <footer class="disclaimer" data-i18n="disclaimer_layout">
+        Prikaz je pojednostavljen tlocrt (pogled odozgo/spreda, elementi poslagani u nizu duž zida). Za realan raspored više zidova/ćoškove koristi zasebne "zidove" iz lijevog panela.
       </footer>
     </div>
 
     <div class="tabpanel" id="tab-cutlist">
       <div class="toolbar">
-        <button class="ghost" id="btnCsv">⬇ Izvezi CSV</button>
-        <button class="ghost" id="btnPrintList">🖨 Ispis krojne liste</button>
+        <button class="ghost" id="btnCsv" data-i18n="btn_csv">⬇ Izvezi CSV</button>
+        <button class="ghost" id="btnPrintList" data-i18n="btn_print_cutlist">🖨 Ispis krojne liste</button>
       </div>
       <div id="cutlistBody"></div>
     </div>
 
     <div class="tabpanel" id="tab-assembly">
-      <div class="hint" style="margin-bottom:16px;">Rastavljeni (eksplodirani) prikaz svakog elementa — brojevi na dijelovima odgovaraju legendi ispod crteža, redoslijedom kojim se element sklapa.</div>
       <div id="assemblyBody"></div>
     </div>
 
     <div class="tabpanel" id="tab-hardware">
       <div class="toolbar">
-        <button class="ghost" id="btnHwCsv">⬇ Izvezi CSV</button>
-        <button class="ghost" id="btnPrintHw">🖨 Ispis</button>
+        <button class="ghost" id="btnHwCsv" data-i18n="btn_csv">⬇ Izvezi CSV</button>
+        <button class="ghost" id="btnPrintHw" data-i18n="btn_print_hw">🖨 Ispis</button>
       </div>
       <div id="hardwareBody"></div>
     </div>
 
     <div class="tabpanel" id="tab-nesting">
       <div class="toolbar">
-        <button class="primary" style="width:auto;margin:0;" id="btnNest">⚙ Izračunaj raspored rezanja</button>
-        <button class="ghost" id="btnPrintNest">🖨 Ispis</button>
+        <button class="primary" style="width:auto;margin:0;" id="btnNest" data-i18n="btn_calc_nest">⚙ Izračunaj raspored rezanja</button>
+        <button class="ghost" id="btnPrintNest" data-i18n="btn_print_nest">🖨 Ispis</button>
       </div>
-      <div id="nestingBody"></div>
+      <div id="nestingBody"><div class="empty-note" id="nestingPlaceholder" data-i18n="placeholder_nest">Klikni "Izračunaj raspored rezanja" da vidiš kako se paneli slažu na ploče.</div></div>
     </div>
 
     <div class="tabpanel" id="tab-materials">
-      <h2 class="section-title">Materijali (ploče)</h2>
+      <h2 class="section-title" data-i18n="tab_materials">Materijali (ploče)</h2>
       <table class="mattbl" id="matTable"></table>
-      <button class="ghost" id="btnAddMat" style="margin-top:10px;">+ Dodaj materijal</button>
+      <button class="ghost" id="btnAddMat" style="margin-top:10px;" data-i18n="btn_addmat">+ Dodaj materijal</button>
     </div>
 
     <div class="tabpanel" id="tab-settings">
       <div class="settings-box">
-        <h2 class="section-title">Postavke rezanja</h2>
+        <h2 class="section-title" data-i18n="sec_cutsettings">Postavke rezanja</h2>
         <div class="field">
-          <label>Širina reza / testere (kerf, mm)</label>
+          <label data-i18n="lbl_kerf">Širina reza / testere (kerf, mm)</label>
           <input type="number" id="s_kerf" value="4">
-          <div class="hint">Debljina reza koja se gubi pri svakom rezu (list cirkulara ili glodala).</div>
+          <div class="hint" data-i18n="hint_kerf">Debljina reza koja se gubi pri svakom rezu (list cirkulara ili glodala).</div>
         </div>
         <div class="field">
-          <label>Rub ploče koji se odbacuje (trim, mm)</label>
+          <label data-i18n="lbl_trim">Rub ploče koji se odbacuje (trim, mm)</label>
           <input type="number" id="s_trim" value="10">
-          <div class="hint">Rezerviše se sa sve četiri strane ploče (neravan rub, oštećenje ambalaže i sl).</div>
+          <div class="hint" data-i18n="hint_trim">Rezerviše se sa sve četiri strane ploče (neravan rub, oštećenje ambalaže i sl).</div>
         </div>
-        <button class="primary" style="width:auto;" id="btnSaveSettings">Sačuvaj postavke</button>
+        <button class="primary" style="width:auto;" id="btnSaveSettings" data-i18n="btn_savesettings">Sačuvaj postavke</button>
       </div>
-      <footer class="disclaimer">
+      <footer class="disclaimer" data-i18n="disclaimer_settings">
         Projekat i postavke čuvaju se samo u tvom browseru (localStorage) — aplikacija ne šalje nikakve podatke o tvom projektu na internet. Jedino se, radi statistike u tabu "Statistika", šalje anonimni signal "posjeta +1" javnom brojaču (bez ikakvih ličnih ili projektnih podataka). Koristi "Sačuvaj (JSON)" da napraviš rezervnu kopiju projekta na disku.
       </footer>
     </div>
 
     <div class="tabpanel" id="tab-help">
-      <div class="help-wrap">
+      <div class="help-wrap lang-bs">
         <h2 class="section-title" style="margin-top:0;">Kako koristiti aplikaciju</h2>
 
         <div class="help-block">
           <h3>1. Raspored</h3>
-          <p>Lijevo dodaješ elemente kuhinje: izabereš tip (bazni, viseći, visoki, ladičar, otvorena polica), upišeš širinu/visinu/dubinu, broj vrata i fioka, materijal i ivicu, pa klikneš "Dodaj u zid". Elementi se ređaju duž trenutnog "zida" — možeš napraviti više zidova za različite strane kuhinje (dugme "+ Novi zid").</p>
+          <p>Lijevo dodaješ elemente kuhinje: izabereš tip (bazni, viseći, visoki, ladičar, otvorena polica, napa), upišeš širinu/visinu/dubinu, broj vrata i fioka, materijal i ivicu, pa klikneš "Dodaj u zid". Elementi se ređaju duž trenutnog "zida" — možeš napraviti više zidova za različite strane kuhinje (dugme "+ Novi zid").</p>
         </div>
 
         <div class="help-block">
@@ -538,12 +544,61 @@
           <p>Sve se automatski čuva u tvom browseru. Za sigurnosnu kopiju ili prenos na drugi računar koristi "💾 Sačuvaj (JSON)" u vrhu stranice, a na drugom računaru učitaj taj fajl preko "📂 Učitaj (JSON)".</p>
         </div>
       </div>
+
+      <div class="help-wrap lang-en" style="display:none;">
+        <h2 class="section-title" style="margin-top:0;">How to use the app</h2>
+
+        <div class="help-block">
+          <h3>1. Layout</h3>
+          <p>On the left you add kitchen elements: pick a type (base, wall, tall, drawer unit, open shelf, hood), enter width/height/depth, number of doors and drawers, material and edge, then click "Add to wall". Elements line up along the current "wall" — you can create multiple walls for different sides of the kitchen (the "+ New wall" button).</p>
+        </div>
+
+        <div class="help-block">
+          <h3>2. Drawers with different heights</h3>
+          <p>When you enter a number of drawers, fields for each drawer appear below. Enter the exact height (mm) for drawers you want to define individually (e.g. 200 for the first, 350 for the second), and leave <b>0</b> for the rest — they'll automatically and evenly split the remaining space.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>3. Back panel</h3>
+          <p><b>Full back panel</b> — standard, covers the whole back. <b>Shortened back panel</b> — leaves a gap from the bottom (e.g. 200mm) for plumbing, useful for a sink cabinet because of the siphon and pipes. <b>No back panel</b> — completely open at the back.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>4. Cutting list</h3>
+          <p>All panels from all elements, grouped by material, with dimensions, quantities and edge banding. Export as CSV (opens in Excel) or print directly.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>5. Assembly</h3>
+          <p>A transparent 3D view of each element in its assembled state. Solid line = part visible from outside, dashed line = part hidden behind (back panel, bottom, inner shelves). Numbers on parts link to the legend and assembly instructions below the drawing.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>6. Hardware</h3>
+          <p>An approximate automatic list of hinges, confirmat screws, drawer slides, handles, legs and shelf supports — based on standard trade rules. Adjust to the actual hardware system you use with your supplier.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>7. Cut optimization</h3>
+          <p>Click "Calculate cutting layout" to see how all panels fit onto standard sheet sizes, using your set kerf width and edge margin. Shows the number of sheets needed and % utilization per material.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>8. Materials and settings</h3>
+          <p>In the "Materials" tab you can add/edit sheets (name, thickness, size, whether it has grain direction). In "Settings" you change the kerf width and the edge trim.</p>
+        </div>
+
+        <div class="help-block">
+          <h3>Saving the project</h3>
+          <p>Everything is saved automatically in your browser. For a backup or to transfer to another computer, use "💾 Save (JSON)" at the top of the page, and load that file on the other computer via "📂 Load (JSON)".</p>
+        </div>
+      </div>
     </div>
 
     <div class="tabpanel" id="tab-stats">
-      <h2 class="section-title" style="margin-top:0;">Statistika korištenja</h2>
+      <h2 class="section-title" style="margin-top:0;" data-i18n="title_stats">Statistika korištenja</h2>
       <div class="stats-grid" id="statsGrid"></div>
-      <div class="hint" style="margin-top:14px;max-width:640px;">
+      <div class="hint" style="margin-top:14px;max-width:640px;" data-i18n="hint_stats">
         Lokalna statistika se računa iz podataka sačuvanih u tvom browseru (localStorage) i vidljiva je samo tebi. Globalni brojač posjeta je javan, anonimni servis (bez ikakvih ličnih podataka) i zahtijeva internet konekciju — ako je nedostupan, prikazaće se samo lokalni podaci.
       </div>
     </div>
@@ -551,8 +606,357 @@
 </div>
 
 <script>
+
 (function(){
 "use strict";
+
+/* ================= I18N (BS / EN) ================= */
+let LANG = (function(){ try{ return localStorage.getItem("kroj_lang") || "bs"; }catch(e){ return "bs"; } })();
+
+const I18N = {
+bs: {
+  page_title: "KROJ — Besplatni dizajner kuhinje online | Krojna lista i optimizacija reza",
+  brand_sub: "DIZAJNER KUHINJE — KROJNA LISTA",
+  btn_save: "💾 Sačuvaj (JSON)", btn_load: "📂 Učitaj (JSON)", btn_reset: "🗑 Novi projekat",
+  lang_switch_to: "EN",
+
+  sec_wall: "Zid / red elemenata", btn_addwall: "+ Novi zid", btn_renwall: "Preimenuj", btn_delwall: "Obriši",
+  sec_addelement: "Dodaj element",
+  lbl_type: "Tip ormarića",
+  type_base: "Bazni (donji)", type_wall: "Viseći (gornji)", type_tall: "Visoki (stubac)",
+  type_drawers: "Ladičar (komoda za fioke)", type_openshelf: "Otvorena viseća polica",
+  type_hood: "Element za napu (ugradbena)",
+  lbl_hoodsize: "Veličina nape",
+  hood_60: "60 cm (standardna, Ø120mm cijev)", hood_90: "90 cm (standardna, Ø150mm cijev)", hood_custom: "Prilagođeno (unesi ručno ispod)",
+  lbl_duct: "Prečnik otvora za cijev (mm)", lbl_pullout: "Izvlačenje vizira (mm)",
+  lbl_motorw: "Širina motor. dijela (mm)", lbl_motord: "Dubina motor. dijela (mm)",
+  hint_hood: "Motorni (gornji, uži) dio nape ulazi kroz otvor u dnu u unutrašnjost elementa i tu je sakriven — dno se gradi kao okvir (prednja/zadnja traka + bočni nosači) oko tog otvora, koji ujedno služe za pričvršćivanje nape vijcima. Provjeri tačne dimenzije nape koju kupuješ.",
+  lbl_name: "Naziv / oznaka", ph_name: "npr. D1",
+  lbl_width: "Širina (mm)", lbl_height: "Visina (mm)", lbl_depth: "Dubina (mm)",
+  lbl_doors: "Broj vrata", lbl_drawers: "Broj fioka",
+  chk_detdraw: "Detaljna kutija fioke (bočnice/dno/leđa fioke)",
+  lbl_drawerheights: "Visine fioka (mm) — 0 = popuni ostatak",
+  hint_drawerheights: "Npr. upiši 200 za prvu, 350 za drugu fioku, a ostavi 0 kod preostalih da automatski ravnomjerno popune ostatak visine.",
+  drawer_n: "Fioka {n}",
+  lbl_shelves: "Broj polica",
+  lbl_back: "Leđa",
+  back_full: "Puna leđa", back_short: "Skraćena leđa (razmak od dna)", back_none: "Bez leđa (potpuno otvoreno)",
+  lbl_backgap: "Razmak od dna (mm)",
+  hint_backgap: "Npr. kod elementa za sudoper ostavi prostor ispod leđa za sifon i cijevi.",
+  lbl_matcorpus: "Materijal korpusa", lbl_matfront: "Materijal fronte", lbl_edge: "Ivica (fronte / vidljive ivice)",
+  edge_04: "ABS 0.4mm", edge_2: "ABS 2mm", edge_none: "bez ivice",
+  lbl_qty: "Količina istih ormarića",
+  btn_addcab: "+ Dodaj u zid", btn_savecab: "✓ Sačuvaj izmjene",
+  sec_cablist: "Elementi u zidu", empty_cablist: "Još nema elemenata u ovom zidu.",
+
+  tab_layout: "Raspored", tab_cutlist: "Krojna lista", tab_assembly: "Sklapanje", tab_hardware: "Okov",
+  tab_nesting: "Optimizacija reza", tab_materials: "Materijali", tab_settings: "Postavke",
+  tab_help: "Uputstvo", tab_stats: "Statistika",
+
+  layout_meta_empty: "Nema elemenata",
+  layout_meta: "Ukupna širina zida: {w} mm  ·  {n} tip(ova) elemenata",
+  empty_layout: "Dodaj elemente iz lijevog panela da vidiš raspored.",
+  disclaimer_layout: "Prikaz je pojednostavljen tlocrt (pogled odozgo/spreda, elementi poslagani u nizu duž zida). Za realan raspored više zidova/ćoškove koristi zasebne \"zidove\" iz lijevog panela.",
+
+  btn_csv: "⬇ Izvezi CSV", btn_print_cutlist: "🖨 Ispis krojne liste",
+  empty_cutlist: "Nema elemenata u projektu — dodaj ormariće u tabu \"Raspored\".",
+  th_num:"#", th_panelname:"Naziv panela", th_cabinet:"Ormarić", th_length:"Dužina (mm)", th_width2:"Širina (mm)",
+  th_qty:"Kom", th_edge:"Ivica", th_area:"m²",
+  total_line: "UKUPNO: {n} panela · {a} m² (bruto, bez optimizacije rezanja)",
+
+  legend_line: "▬ Puna linija = vidljivi dio (spolja) &nbsp;&nbsp; ┄ Isprekidana linija = dio sakriven iza (leđa, dno, lijeva bočnica, unutrašnje police) — kao rendgenski/providan prikaz sklopljenog elementa.",
+  th_hashtag:"#", th_part:"Dio", th_dims:"Dimenzije", th_vis:"Vidljivost",
+  vis_visible: "vidljivo", vis_hidden: "skriveno (iza)",
+  empty_assembly: "Nema elemenata u projektu.",
+
+  btn_print_hw: "🖨 Ispis",
+  hint_hw: "Okvirne količine na osnovu standardnih pravila struke (npr. 2/3/4 šarke po vratima zavisno od visine, 4 konfirmata po spoju panela). Prilagodi stvarnom sistemu okova koji koristiš.",
+  th_item:"Stavka", th_wall:"Zid", th_element:"Element", th_qtyper:"Kom/1 el.", th_numel:"Broj el.", th_total:"Ukupno",
+  empty_hw: "Nema elemenata u projektu.",
+
+  btn_calc_nest: "⚙ Izračunaj raspored rezanja", btn_print_nest: "🖨 Ispis",
+  placeholder_nest: "Klikni \"Izračunaj raspored rezanja\" da vidiš kako se paneli slažu na ploče.",
+  sheet_format: "Format ploče: {w}×{h}mm ·",
+  grain_yes: "sa smjerom teksture (bez rotacije)", grain_no: "bez smjera teksture (rotacija dozvoljena)",
+  util_badge: "{n} ploča · prosj. iskorištenost {p}%",
+  sheet_title: "PLOČA {n} — iskorištenost {p}%",
+  warn_toobig: "⚠ {n} panel(a) ne staje ni u jednu orijentaciju na odabrani format ploče: {list}",
+  empty_nesting: "Nema elemenata u projektu.",
+
+  th_matname:"Naziv", th_thickness:"Debljina(mm)", th_sheetformat:"Format ploče Š×V(mm)", th_grain:"Smjer teksture",
+  btn_addmat: "+ Dodaj materijal",
+
+  sec_cutsettings: "Postavke rezanja",
+  lbl_kerf: "Širina reza / testere (kerf, mm)", hint_kerf: "Debljina reza koja se gubi pri svakom rezu (list cirkulara ili glodala).",
+  lbl_trim: "Rub ploče koji se odbacuje (trim, mm)", hint_trim: "Rezerviše se sa sve četiri strane ploče (neravan rub, oštećenje ambalaže i sl).",
+  btn_savesettings: "Sačuvaj postavke",
+  disclaimer_settings: "Projekat i postavke čuvaju se samo u tvom browseru (localStorage) — aplikacija ne šalje nikakve podatke o tvom projektu na internet. Jedino se, radi statistike u tabu \"Statistika\", šalje anonimni signal \"posjeta +1\" javnom brojaču (bez ikakvih ličnih ili projektnih podataka). Koristi \"Sačuvaj (JSON)\" da napraviš rezervnu kopiju projekta na disku.",
+
+  title_stats: "Statistika korištenja",
+  hint_stats: "Lokalna statistika se računa iz podataka sačuvanih u tvom browseru (localStorage) i vidljiva je samo tebi. Globalni brojač posjeta je javan, anonimni servis (bez ikakvih ličnih podataka) i zahtijeva internet konekciju — ako je nedostupan, prikazaće se samo lokalni podaci.",
+  stat_global: "Globalni broj korištenja", stat_global_sub: "svi korisnici, svi uređaji", stat_loading: "Učitavanje...", stat_offline: "nedostupno / offline",
+  stat_sessions: "Posjeta (ovaj uređaj)", stat_since: "od {d}",
+  stat_elements: "Elemenata ikad dodano", stat_elements_sub: "kumulativno, i obrisani se broje",
+  stat_csv: "CSV izvoza", stat_prints: "Ispisa (print)", stat_cutopt: "Izračuna optimizacije reza",
+  stat_project: "Trenutni projekat",
+  stat_project_sub: "{w} zid(ova) · {c} tip(ova) elemenata trenutno u projektu · {m} materijal(a) definisano",
+
+  confirm_delwall: "Obrisati zid i sve elemente u njemu?",
+  alert_onewall: "Mora postojati bar jedan zid.",
+  prompt_newwall: "Naziv novog zida:", prompt_wallname_prefix: "Zid ",
+  prompt_renwall: "Novi naziv zida:",
+  confirm_delmat: "Obrisati materijal? Paneli koji ga koriste ostat će s nepostojećim ID-om.",
+  alert_nocsv: "Nema podataka za izvoz.",
+  alert_loaded: "Projekat učitan.", alert_loaderr: "Greška pri učitavanju fajla.",
+  confirm_reset: "Ovo briše trenutni projekat iz browsera. Nastaviti?",
+  alert_settingssaved: "Postavke sačuvane."
+,
+  cab_meta: "vrata: {doors} · fioke: {drawers} · kom: {qty}",
+  dim_w_abbr: "Š", dim_d_abbr: "D", lbl_qty_abbr: "kom",
+  act_moveleft: "Pomjeri lijevo", act_moveright: "Pomjeri desno", act_edit: "Uredi", act_dup: "Dupliraj", act_del: "Obriši",
+  drawer_ph: "0 = ostatak",
+
+  part_side: "Bočnica", part_bottom: "Dno", part_topsupport: "Pod-gornjica (nosač)",
+  part_top: "Gornjica", part_top_hood: "Gornjica (otvor Ø{d}mm za cijev)",
+  part_bottom_front_strip: "Dno - prednja traka (uz otvor za napu)",
+  part_bottom_back_strip: "Dno - zadnja traka (uz otvor za napu)",
+  part_hood_bracket: "Nosač za fiksiranje nape (bočni)",
+  part_back_full: "Leđa (HDF)", part_back_short: "Leđa (skraćena, razmak od dna {g}mm)",
+  part_shelf: "Polica", part_shelf_open: "Polica (otvorena)",
+  part_door: "Vrata (front)",
+  part_drawer_front: "Fioka {n} - front", part_drawer_side: "Fioka {n} - bočnica kutije",
+  part_drawer_back: "Fioka {n} - zadnja stranica", part_drawer_bottom: "Fioka {n} - dno kutije (HDF)",
+  edge_onelong: "1 dužu stranu", edge_withsides: "{edge} (4 strane)",
+
+  csv_cutlist_header: "Materijal;Naziv panela;Ormaric;Duzina(mm);Sirina(mm);Kom;Ivica",
+  csv_hw_header: "Stavka;Zid;Element;Tip;Kom po elementu;Broj elemenata;Ukupno",
+
+  asm_side_r: "Bočnica (desna)", asm_side_l: "Bočnica (lijeva)",
+  asm_bottom: "Dno", asm_top_front_rail: "Pod-gornjica prednja", asm_top_back_rail: "Pod-gornjica zadnja",
+  asm_top: "Gornjica", asm_top_hood: "Gornjica (otvor za cijev)",
+  asm_bottom_front_strip: "Dno - prednja traka", asm_bottom_back_strip: "Dno - zadnja traka",
+  asm_bracket_l: "Nosač (lijevi)", asm_bracket_r: "Nosač (desni)",
+  asm_back_full: "Leđa (HDF)", asm_back_short: "Leđa (skraćena)",
+  asm_shelf_n: "Polica {n}", asm_door_n: "Vrata {n}", asm_drawer_n: "Fioka {n} ({h}mm)",
+
+  step_openshelf_1: "Obilježi na zidu {n} vodoravn(e/ih) linij(e) razmaknutih po visini elementa i provjeri libelom.",
+  step_openshelf_2: "Učvrsti zidne nosače (2 po polici) u zidne tiple/moždanike.",
+  step_openshelf_3: "Postavi {n} dask(u/e) police na nosače i po potrebi fiksiraj odozdo vijkom.",
+  step_hood_1: "Spoji obje bočnice sa gornjicom (konfirmat vijci).",
+  step_hood_2: "Montiraj prednju i zadnju traku dna, te oba bočna nosača — oni formiraju otvor u dnu kroz koji ulazi motorski (gornji, uži) dio nape, i ujedno su mjesto za njeno pričvršćivanje.",
+  step_hood_3: "Izbuši otvor Ø{d}mm u gornjici za odzračni kanal.",
+  step_hood_4: "Montiraj element na zid iznad ploče za kuhanje, na propisanoj visini prema uputstvu proizvođača nape.",
+  step_hood_5: "Provuci napu odozdo kroz otvor u dnu — motorski dio ulazi u unutrašnjost elementa i tu je sakriven, a ravni dio sa vizirom ostaje vidljiv ispod elementa.",
+  step_hood_6: "Pričvrsti napu vijcima kroz bočne nosače i/ili prednju/zadnju traku dna, prema uputstvu proizvođača.",
+  step_hood_7: "Priključi odzračnu cijev (Ø{d}mm) i provjeri izvlačenje vizira ({p}mm).",
+  step_generic_1: "Spoji obje bočnice sa dnom i {anchor} (konfirmat vijci + moždanici) — provjeri pravi ugao (dijagonale).",
+  anchor_topsupport: "pod-gornjicama", anchor_top: "gornjicom",
+  step_back_full: "Umetni puna leđa (HDF) u falc sa zadnje strane i pričvrsti spajalicama.",
+  step_back_short: "Umetni skraćena leđa (HDF) — ostavljen je razmak od {g}mm od dna za instalacije (npr. sifon sudopera).",
+  step_back_none: "Element je bez leđa — radi stabilnosti dodaj dijagonalnu metalnu sponu u gornji ugao.",
+  step_shelves: "Postavi nosače polica na željenu visinu i umetni {n} polic(u/e).",
+  step_doors: "Izbuši i montiraj šarke na vrata ({n} kom), zatim poravnaj na korpusu.",
+  step_drawers: "Montiraj vodilice i tijela fioka ({n} kom), pa naknadno fronte fioka.",
+  step_legs: "Montiraj noge (4 kom) na dno korpusa i poravnaj visinu.",
+
+  hw_shelf_bracket: "Zidni nosač police", hw_wall_screw: "Tipl + vijak za zid",
+  hw_hood_top_confirm: "Konfirmat vijak (gornjica u bočnice)",
+  hw_hood_strip_confirm: "Konfirmat vijak (prednja/zadnja traka dna)",
+  hw_hood_bracket_screw: "Vijak za bočne nosače dna (fiksiranje)",
+  hw_hood_fix_screw: "Vijak za fiksiranje nape u korpus",
+  hw_wallmount_screw: "Vijak + tipl za montažu elementa na zid",
+  hw_back_staple: "Spajalica za leđa (HDF)",
+  hw_hinge: "Šarka (kruta/polukruta)", hw_slide: "Klizač za fioku (par = 2 kom)", hw_handle: "Ručka",
+  hw_confirm_corpus: "Konfirmat vijak (korpus)", hw_shelf_pin: "Nosač police (tiplica)",
+  hw_leg: "Noga (podesiva plastična/metalna)",
+
+},
+en: {
+  page_title: "KROJ — Free Online Kitchen Designer | Cutting List & Cut Optimization",
+  brand_sub: "KITCHEN DESIGNER — CUTTING LIST",
+  btn_save: "💾 Save (JSON)", btn_load: "📂 Load (JSON)", btn_reset: "🗑 New project",
+  lang_switch_to: "BS",
+
+  sec_wall: "Wall / row of elements", btn_addwall: "+ New wall", btn_renwall: "Rename", btn_delwall: "Delete",
+  sec_addelement: "Add element",
+  lbl_type: "Cabinet type",
+  type_base: "Base (lower)", type_wall: "Wall (upper)", type_tall: "Tall (column)",
+  type_drawers: "Drawer unit (chest)", type_openshelf: "Open wall shelf",
+  type_hood: "Hood cabinet (built-in)",
+  lbl_hoodsize: "Hood size",
+  hood_60: "60 cm (standard, Ø120mm duct)", hood_90: "90 cm (standard, Ø150mm duct)", hood_custom: "Custom (enter manually below)",
+  lbl_duct: "Duct hole diameter (mm)", lbl_pullout: "Visor pull-out (mm)",
+  lbl_motorw: "Motor unit width (mm)", lbl_motord: "Motor unit depth (mm)",
+  hint_hood: "The motor (upper, narrower) part of the hood passes through the opening in the bottom into the inside of the cabinet, where it's hidden — the bottom is built as a frame (front/back strip + side battens) around that opening, which also serve as fixing points for the hood screws. Check the exact dimensions of the hood you're buying.",
+  lbl_name: "Name / label", ph_name: "e.g. D1",
+  lbl_width: "Width (mm)", lbl_height: "Height (mm)", lbl_depth: "Depth (mm)",
+  lbl_doors: "Number of doors", lbl_drawers: "Number of drawers",
+  chk_detdraw: "Detailed drawer box (sides/bottom/back)",
+  lbl_drawerheights: "Drawer heights (mm) — 0 = fill remaining",
+  hint_drawerheights: "E.g. enter 200 for the first, 350 for the second drawer, and leave 0 for the rest so they automatically and evenly split the remaining height.",
+  drawer_n: "Drawer {n}",
+  lbl_shelves: "Number of shelves",
+  lbl_back: "Back panel",
+  back_full: "Full back panel", back_short: "Shortened back panel (gap from bottom)", back_none: "No back panel (fully open)",
+  lbl_backgap: "Gap from bottom (mm)",
+  hint_backgap: "E.g. for a sink cabinet, leave room below the back panel for the siphon and pipes.",
+  lbl_matcorpus: "Carcass material", lbl_matfront: "Front material", lbl_edge: "Edge banding (fronts / visible edges)",
+  edge_04: "ABS 0.4mm", edge_2: "ABS 2mm", edge_none: "no edge banding",
+  lbl_qty: "Quantity of identical cabinets",
+  btn_addcab: "+ Add to wall", btn_savecab: "✓ Save changes",
+  sec_cablist: "Elements in wall", empty_cablist: "No elements in this wall yet.",
+
+  tab_layout: "Layout", tab_cutlist: "Cutting list", tab_assembly: "Assembly", tab_hardware: "Hardware",
+  tab_nesting: "Cut optimization", tab_materials: "Materials", tab_settings: "Settings",
+  tab_help: "Instructions", tab_stats: "Statistics",
+
+  layout_meta_empty: "No elements",
+  layout_meta: "Total wall width: {w} mm  ·  {n} element type(s)",
+  empty_layout: "Add elements from the left panel to see the layout.",
+  disclaimer_layout: "This is a simplified plan view (elements arranged in a row along the wall). For a realistic layout with multiple walls/corners, use separate \"walls\" from the left panel.",
+
+  btn_csv: "⬇ Export CSV", btn_print_cutlist: "🖨 Print cutting list",
+  empty_cutlist: "No elements in the project — add cabinets in the \"Layout\" tab.",
+  th_num:"#", th_panelname:"Panel name", th_cabinet:"Cabinet", th_length:"Length (mm)", th_width2:"Width (mm)",
+  th_qty:"Qty", th_edge:"Edge", th_area:"m²",
+  total_line: "TOTAL: {n} panels · {a} m² (gross, before cut optimization)",
+
+  legend_line: "▬ Solid line = visible part (outside) &nbsp;&nbsp; ┄ Dashed line = part hidden behind (back panel, bottom, left side, inner shelves) — an X-ray-like, transparent view of the assembled element.",
+  th_hashtag:"#", th_part:"Part", th_dims:"Dimensions", th_vis:"Visibility",
+  vis_visible: "visible", vis_hidden: "hidden (behind)",
+  empty_assembly: "No elements in the project.",
+
+  btn_print_hw: "🖨 Print",
+  hint_hw: "Approximate quantities based on standard trade rules (e.g. 2/3/4 hinges per door depending on height, 4 confirmat screws per panel joint). Adjust to the actual hardware system you use.",
+  th_item:"Item", th_wall:"Wall", th_element:"Element", th_qtyper:"Qty/1 el.", th_numel:"# elements", th_total:"Total",
+  empty_hw: "No elements in the project.",
+
+  btn_calc_nest: "⚙ Calculate cutting layout", btn_print_nest: "🖨 Print",
+  placeholder_nest: "Click \"Calculate cutting layout\" to see how the panels fit on the sheets.",
+  sheet_format: "Sheet size: {w}×{h}mm ·",
+  grain_yes: "with grain direction (no rotation)", grain_no: "no grain direction (rotation allowed)",
+  util_badge: "{n} sheet(s) · avg. utilization {p}%",
+  sheet_title: "SHEET {n} — utilization {p}%",
+  warn_toobig: "⚠ {n} panel(s) don't fit in either orientation on the selected sheet size: {list}",
+  empty_nesting: "No elements in the project.",
+
+  th_matname:"Name", th_thickness:"Thickness (mm)", th_sheetformat:"Sheet size W×H (mm)", th_grain:"Grain direction",
+  btn_addmat: "+ Add material",
+
+  sec_cutsettings: "Cutting settings",
+  lbl_kerf: "Saw blade width (kerf, mm)", hint_kerf: "The cut thickness lost on every cut (circular saw blade or router bit).",
+  lbl_trim: "Sheet edge trim (mm)", hint_trim: "Reserved on all four sides of the sheet (uneven edge, packaging damage, etc).",
+  btn_savesettings: "Save settings",
+  disclaimer_settings: "The project and settings are saved only in your browser (localStorage) — the app doesn't send any of your project data over the internet. The only exception: for the \"Statistics\" tab, an anonymous \"visit +1\" signal is sent to a public counter (no personal or project data). Use \"Save (JSON)\" to make a backup copy of the project on disk.",
+
+  title_stats: "Usage statistics",
+  hint_stats: "Local statistics are calculated from data saved in your browser (localStorage) and are visible only to you. The global visit counter is a public, anonymous service (no personal data) and requires an internet connection — if unavailable, only local data will be shown.",
+  stat_global: "Global usage count", stat_global_sub: "all users, all devices", stat_loading: "Loading...", stat_offline: "unavailable / offline",
+  stat_sessions: "Visits (this device)", stat_since: "since {d}",
+  stat_elements: "Elements ever added", stat_elements_sub: "cumulative, deleted ones still count",
+  stat_csv: "CSV exports", stat_prints: "Prints", stat_cutopt: "Cut optimizations run",
+  stat_project: "Current project",
+  stat_project_sub: "{w} wall(s) · {c} element type(s) currently in project · {m} material(s) defined",
+
+  confirm_delwall: "Delete this wall and all its elements?",
+  alert_onewall: "There must be at least one wall.",
+  prompt_newwall: "New wall name:", prompt_wallname_prefix: "Wall ",
+  prompt_renwall: "New wall name:",
+  confirm_delmat: "Delete this material? Panels using it will keep a non-existent ID.",
+  alert_nocsv: "No data to export.",
+  alert_loaded: "Project loaded.", alert_loaderr: "Error loading file.",
+  confirm_reset: "This clears the current project from the browser. Continue?",
+  alert_settingssaved: "Settings saved."
+,
+  cab_meta: "doors: {doors} · drawers: {drawers} · qty: {qty}",
+  dim_w_abbr: "W", dim_d_abbr: "D", lbl_qty_abbr: "qty",
+  act_moveleft: "Move left", act_moveright: "Move right", act_edit: "Edit", act_dup: "Duplicate", act_del: "Delete",
+  drawer_ph: "0 = remaining",
+
+  part_side: "Side panel", part_bottom: "Bottom", part_topsupport: "Top support rail",
+  part_top: "Top panel", part_top_hood: "Top panel (Ø{d}mm duct hole)",
+  part_bottom_front_strip: "Bottom - front strip (next to hood opening)",
+  part_bottom_back_strip: "Bottom - back strip (next to hood opening)",
+  part_hood_bracket: "Hood fixing bracket (side)",
+  part_back_full: "Back panel (HDF)", part_back_short: "Back panel (shortened, {g}mm gap from bottom)",
+  part_shelf: "Shelf", part_shelf_open: "Shelf (open)",
+  part_door: "Door (front)",
+  part_drawer_front: "Drawer {n} - front", part_drawer_side: "Drawer {n} - box side",
+  part_drawer_back: "Drawer {n} - back panel", part_drawer_bottom: "Drawer {n} - box bottom (HDF)",
+  edge_onelong: "1 long side", edge_withsides: "{edge} (4 sides)",
+
+  csv_cutlist_header: "Material;Panel name;Cabinet;Length(mm);Width(mm);Qty;Edge",
+  csv_hw_header: "Item;Wall;Element;Type;Qty per element;# elements;Total",
+
+  asm_side_r: "Side panel (right)", asm_side_l: "Side panel (left)",
+  asm_bottom: "Bottom", asm_top_front_rail: "Front top rail", asm_top_back_rail: "Back top rail",
+  asm_top: "Top panel", asm_top_hood: "Top panel (duct hole)",
+  asm_bottom_front_strip: "Bottom - front strip", asm_bottom_back_strip: "Bottom - back strip",
+  asm_bracket_l: "Bracket (left)", asm_bracket_r: "Bracket (right)",
+  asm_back_full: "Back panel (HDF)", asm_back_short: "Back panel (shortened)",
+  asm_shelf_n: "Shelf {n}", asm_door_n: "Door {n}", asm_drawer_n: "Drawer {n} ({h}mm)",
+
+  step_openshelf_1: "Mark {n} horizontal line(s) on the wall spaced out over the element's height and check with a level.",
+  step_openshelf_2: "Fix the wall brackets (2 per shelf) into wall plugs/anchors.",
+  step_openshelf_3: "Place the {n} shelf board(s) on the brackets and secure from below with a screw if needed.",
+  step_hood_1: "Join both side panels to the top panel (confirmat screws).",
+  step_hood_2: "Fit the front and back bottom strips, and both side brackets — they form the opening in the bottom through which the hood's motor (upper, narrower) part enters, and also serve as its fixing points.",
+  step_hood_3: "Drill a Ø{d}mm hole in the top panel for the exhaust duct.",
+  step_hood_4: "Mount the element on the wall above the cooktop, at the height specified by the hood manufacturer's instructions.",
+  step_hood_5: "Slide the hood in from below through the opening in the bottom — the motor part goes inside the element and is hidden there, while the flat part with the visor stays visible below the element.",
+  step_hood_6: "Fix the hood with screws through the side brackets and/or the front/back bottom strips, per the manufacturer's instructions.",
+  step_hood_7: "Connect the exhaust duct (Ø{d}mm) and check the visor pull-out ({p}mm).",
+  step_generic_1: "Join both side panels to the bottom and {anchor} (confirmat screws + dowels) — check for a right angle (diagonals).",
+  anchor_topsupport: "the top support rails", anchor_top: "the top panel",
+  step_back_full: "Fit the full back panel (HDF) into the rabbet at the back and fix with staples.",
+  step_back_short: "Fit the shortened back panel (HDF) — a {g}mm gap from the bottom has been left for plumbing (e.g. sink siphon).",
+  step_back_none: "This element has no back panel — for stability, add a diagonal metal brace in the top corner.",
+  step_shelves: "Fit shelf supports at the desired height and insert {n} shelf/shelves.",
+  step_doors: "Drill and fit hinges on the doors ({n} pcs), then align them on the carcass.",
+  step_drawers: "Fit the slides and drawer boxes ({n} pcs), then the drawer fronts afterwards.",
+  step_legs: "Fit the legs (4 pcs) to the bottom of the carcass and level the height.",
+
+  hw_shelf_bracket: "Wall shelf bracket", hw_wall_screw: "Wall plug + screw",
+  hw_hood_top_confirm: "Confirmat screw (top panel to sides)",
+  hw_hood_strip_confirm: "Confirmat screw (bottom front/back strip)",
+  hw_hood_bracket_screw: "Screw for bottom side brackets (fixing)",
+  hw_hood_fix_screw: "Screw for fixing the hood into the cabinet",
+  hw_wallmount_screw: "Screw + plug for mounting element to wall",
+  hw_back_staple: "Staple for back panel (HDF)",
+  hw_hinge: "Hinge (full/half overlay)", hw_slide: "Drawer slide (pair = 2 pcs)", hw_handle: "Handle",
+  hw_confirm_corpus: "Confirmat screw (carcass)", hw_shelf_pin: "Shelf support pin",
+  hw_leg: "Leg (adjustable plastic/metal)",
+
+}
+};
+
+function t(key, vars){
+  let s = (I18N[LANG] && I18N[LANG][key] != null) ? I18N[LANG][key] : (I18N.bs[key] != null ? I18N.bs[key] : key);
+  if(vars) Object.keys(vars).forEach(k=>{ s = s.split("{"+k+"}").join(vars[k]); });
+  return s;
+}
+
+function applyStaticI18n(){
+  document.documentElement.lang = LANG;
+  document.title = t("page_title");
+  document.body.setAttribute("data-lang", LANG);
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    el.textContent = t(el.getAttribute("data-i18n"));
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
+    el.setAttribute("placeholder", t(el.getAttribute("data-i18n-ph")));
+  });
+  const langBtn = document.getElementById("btnLang");
+  if(langBtn) langBtn.textContent = "🌐 " + t("lang_switch_to");
+}
+
+function setLang(l){
+  LANG = l;
+  try{ localStorage.setItem("kroj_lang", l); }catch(e){}
+  applyStaticI18n();
+  renderAll();
+}
+
 
 /* ================= STATE ================= */
 const LS_KEY = "kroj_kuhinje_state_v1";
@@ -660,7 +1064,7 @@ function fetchGlobalCounter(){
 function fmtDate(iso){
   try{
     const d = new Date(iso);
-    return d.toLocaleDateString("bs-BA", { year:"numeric", month:"short", day:"numeric" });
+    return d.toLocaleDateString(LANG==="en" ? "en-US" : "bs-BA", { year:"numeric", month:"short", day:"numeric" });
   }catch(e){ return "—"; }
 }
 
@@ -668,21 +1072,21 @@ function renderStats(){
   const grid = document.getElementById("statsGrid");
   if(!grid) return;
   const globalCard = globalCountCache.loading
-    ? `<div class="stat-card"><div class="stat-num">…</div><div class="stat-lbl">Globalni broj korištenja</div><div class="stat-sub">Učitavanje...</div></div>`
+    ? `<div class="stat-card"><div class="stat-num">…</div><div class="stat-lbl">${t('stat_global')}</div><div class="stat-sub">${t('stat_loading')}</div></div>`
     : globalCountCache.error
-      ? `<div class="stat-card"><div class="stat-num">—</div><div class="stat-lbl">Globalni broj korištenja</div><span class="stat-badge-offline">nedostupno / offline</span></div>`
-      : `<div class="stat-card"><div class="stat-num">${globalCountCache.value}</div><div class="stat-lbl">Globalni broj korištenja</div><div class="stat-sub">svi korisnici, svi uređaji</div></div>`;
+      ? `<div class="stat-card"><div class="stat-num">—</div><div class="stat-lbl">${t('stat_global')}</div><span class="stat-badge-offline">${t('stat_offline')}</span></div>`
+      : `<div class="stat-card"><div class="stat-num">${globalCountCache.value}</div><div class="stat-lbl">${t('stat_global')}</div><div class="stat-sub">${t('stat_global_sub')}</div></div>`;
 
   grid.innerHTML = `
     ${globalCard}
-    <div class="stat-card"><div class="stat-num">${stats.sessions}</div><div class="stat-lbl">Posjeta (ovaj uređaj)</div><div class="stat-sub">od ${fmtDate(stats.firstUsed)}</div></div>
-    <div class="stat-card"><div class="stat-num">${stats.elementsAddedTotal}</div><div class="stat-lbl">Elemenata ikad dodano</div><div class="stat-sub">kumulativno, i obrisani se broje</div></div>
-    <div class="stat-card"><div class="stat-num">${stats.csvExports}</div><div class="stat-lbl">CSV izvoza</div></div>
-    <div class="stat-card"><div class="stat-num">${stats.prints}</div><div class="stat-lbl">Ispisa (print)</div></div>
-    <div class="stat-card"><div class="stat-num">${stats.cutOptimizations}</div><div class="stat-lbl">Izračuna optimizacije reza</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.sessions}</div><div class="stat-lbl">${t('stat_sessions')}</div><div class="stat-sub">${t('stat_since',{d:fmtDate(stats.firstUsed)})}</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.elementsAddedTotal}</div><div class="stat-lbl">${t('stat_elements')}</div><div class="stat-sub">${t('stat_elements_sub')}</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.csvExports}</div><div class="stat-lbl">${t('stat_csv')}</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.prints}</div><div class="stat-lbl">${t('stat_prints')}</div></div>
+    <div class="stat-card"><div class="stat-num">${stats.cutOptimizations}</div><div class="stat-lbl">${t('stat_cutopt')}</div></div>
     <div class="stat-card wide">
-      <div class="stat-lbl" style="margin-bottom:6px;">Trenutni projekat</div>
-      <div class="stat-sub">${state.walls.length} zid(ova) · ${state.walls.reduce((s,w)=>s+w.cabinets.length,0)} tip(ova) elemenata trenutno u projektu · ${state.materials.length} materijal(a) definisano</div>
+      <div class="stat-lbl" style="margin-bottom:6px;">${t('stat_project')}</div>
+      <div class="stat-sub">${t('stat_project_sub',{w:state.walls.length,c:state.walls.reduce((s,w)=>s+w.cabinets.length,0),m:state.materials.length})}</div>
     </div>
   `;
 }
@@ -698,6 +1102,7 @@ const TYPE_DEFAULTS = {
   hood: { w:600, h:140, d:320, doors:0, drawers:0, shelves:0, backType:"none", backGap:0, hoodDuct:120, hoodPullout:152, hoodMotorW:498, hoodMotorD:260 }
 };
 const TYPE_LABEL = { base:"Bazni", wall:"Viseći", tall:"Visoki", drawers:"Ladičar", openshelf:"Otvorena polica", hood:"Element za napu" };
+function typeLabel(type){ return t("type_"+type); }
 
 // Standardne (okvirne) veličine ugradbenih napa — širina korpusa je nešto veća od nape radi tolerancije ugradnje.
 // motorW/motorD = dimenzije gornjeg (užeg) motorskog dijela nape koji ulazi kroz otvor u dnu, u unutrašnjost elementa.
@@ -727,7 +1132,7 @@ function computeDrawerHeights(totalZoneH, drawers, drawerHeights, gap){
 /* ================= PANEL GENERATION (recepti) ================= */
 // Returns array of {name, w, h, qty, materialId, edge, cabinetName, wallName}
 function generatePanels(cab, wallName){
-  const t = matById(cab.material)?.thickness ?? 18;
+  const th = matById(cab.material)?.thickness ?? 18;
   const tf = matById(cab.frontMat)?.thickness ?? 18;
   const W = cab.w, H = cab.h, D = cab.d;
   const qtyMult = cab.qty || 1;
@@ -741,36 +1146,38 @@ function generatePanels(cab, wallName){
   };
 
   const mat = cab.material;
+  const EDGE_NONE = t("edge_none");
+  const EDGE_ONELONG = t("edge_onelong");
 
   // Otvorena viseća polica — samo daske, bez korpusa/bočnica/leđa/fronte
   if(cab.type === "openshelf"){
     const shelfQty = Math.max(1, cab.shelves||1);
-    push("Polica (otvorena)", W, D, shelfQty, mat, "1 dužu stranu");
+    push(t("part_shelf_open"), W, D, shelfQty, mat, EDGE_ONELONG);
     return panels;
   }
 
   // Carcass sides — common to all types
-  push("Bočnica", H, D, 2, mat, "1 dužu stranu");
+  push(t("part_side"), H, D, 2, mat, EDGE_ONELONG);
 
   if(cab.type === "base" || cab.type === "drawers"){
-    push("Dno", W-2*t, D, 1, mat, "1 dužu stranu");
-    push("Pod-gornjica (nosač)", W-2*t, 100, 2, mat, "bez ivice");
+    push(t("part_bottom"), W-2*th, D, 1, mat, EDGE_ONELONG);
+    push(t("part_topsupport"), W-2*th, 100, 2, mat, EDGE_NONE);
   } else if(cab.type === "hood"){
-    push("Gornjica (otvor Ø"+(cab.hoodDuct||120)+"mm za cijev)", W-2*t, D, 1, mat, "bez ivice");
+    push(t("part_top_hood",{d:cab.hoodDuct||120}), W-2*th, D, 1, mat, EDGE_NONE);
     // Dno se gradi kao okvir oko otvora kroz koji ulazi motorski dio nape (skriven u unutrašnjosti),
     // umjesto jedne ploče sa velikim izrezanim otvorom - lakše za izradu i daje mjesto za fiksiranje nape.
-    const Wi = W-2*t;
+    const Wi = W-2*th;
     const motorW = Math.max(60, Math.min(cab.hoodMotorW||498, Wi-40));
     const motorD = Math.max(60, Math.min(cab.hoodMotorD||260, D-40));
     const frontBackStrip = Math.max(20, (D-motorD)/2);
     const sideStrip = Math.max(20, (Wi-motorW)/2);
-    push("Dno - prednja traka (uz otvor za napu)", Wi, frontBackStrip, 1, mat, "1 dužu stranu");
-    push("Dno - zadnja traka (uz otvor za napu)", Wi, frontBackStrip, 1, mat, "bez ivice");
-    push("Nosač za fiksiranje nape (bočni)", motorD, sideStrip, 2, mat, "bez ivice");
+    push(t("part_bottom_front_strip"), Wi, frontBackStrip, 1, mat, EDGE_ONELONG);
+    push(t("part_bottom_back_strip"), Wi, frontBackStrip, 1, mat, EDGE_NONE);
+    push(t("part_hood_bracket"), motorD, sideStrip, 2, mat, EDGE_NONE);
   } else {
     // wall & tall: full top+bottom
-    push("Gornjica", W-2*t, D, 1, mat, "bez ivice");
-    push("Dno", W-2*t, D, 1, mat, "1 dužu stranu");
+    push(t("part_top"), W-2*th, D, 1, mat, EDGE_NONE);
+    push(t("part_bottom"), W-2*th, D, 1, mat, EDGE_ONELONG);
   }
 
   // Back panel (HDF) — use HDF material if it exists in list, else same carcass mat
@@ -779,16 +1186,16 @@ function generatePanels(cab, wallName){
   if(backType === "none"){
     // bez leđa - potpuno otvoren zadnji dio (npr. maksimalan prostor za instalacije)
   } else if(backType === "short"){
-    const bgap = Math.max(0, Math.min(H-2*t-20, cab.backGap||0));
-    push("Leđa (skraćena, razmak od dna "+bgap+"mm)", W-2*t, (H-2*t)-bgap, 1, hdf.id, "bez ivice");
+    const bgap = Math.max(0, Math.min(H-2*th-20, cab.backGap||0));
+    push(t("part_back_short",{g:bgap}), W-2*th, (H-2*th)-bgap, 1, hdf.id, EDGE_NONE);
   } else {
-    push("Leđa (HDF)", W-2*t, H-2*t, 1, hdf.id, "bez ivice");
+    push(t("part_back_full"), W-2*th, H-2*th, 1, hdf.id, EDGE_NONE);
   }
 
   // Shelves
   const shelfQty = Math.max(0, cab.shelves||0);
   if(shelfQty > 0){
-    push("Polica", W-2*t-4, D-20, shelfQty, mat, "1 dužu stranu");
+    push(t("part_shelf"), W-2*th-4, D-20, shelfQty, mat, EDGE_ONELONG);
   }
 
   // Fronts: doors
@@ -802,7 +1209,7 @@ function generatePanels(cab, wallName){
     const drawerZoneH = drawers>0 ? Math.round(totalFrontH*0.28) : 0;
     const doorZoneH = totalFrontH - drawerZoneH - (drawers>0?gap:0);
     const doorW = (W - 4 - (doors-1)*gap)/doors;
-    push("Vrata (front)", doorW, doorZoneH, doors, cab.frontMat, edge+" (4 strane)");
+    push(t("part_door"), doorW, doorZoneH, doors, cab.frontMat, t("edge_withsides",{edge}));
   }
 
   if(drawers > 0){
@@ -810,15 +1217,15 @@ function generatePanels(cab, wallName){
     const heights = computeDrawerHeights(drawerZoneH, drawers, cab.drawerHeights||[], gap);
     const frontW = W-4;
     heights.forEach((h,i)=>{
-      push("Fioka "+(i+1)+" - front", frontW, h, 1, cab.frontMat, edge+" (4 strane)");
+      push(t("part_drawer_front",{n:i+1}), frontW, h, 1, cab.frontMat, t("edge_withsides",{edge}));
       if(cab.detailedDrawers){
         // simplified drawer box: 2 sides, 1 back, 1 bottom (thin material) per drawer
         const boxMatId = mat; // reuse carcass material as approximation
         const boxH = Math.max(60, Math.min(h-8, 150)); // realan zid kutije, ograničen na visinu fronte
         const boxD = D - 50;
-        push("Fioka "+(i+1)+" - bočnica kutije", boxD, boxH, 2, boxMatId, "1 dužu stranu");
-        push("Fioka "+(i+1)+" - zadnja stranica", frontW-36, boxH, 1, boxMatId, "bez ivice");
-        push("Fioka "+(i+1)+" - dno kutije (HDF)", frontW-36, boxD-10, 1, hdf.id, "bez ivice");
+        push(t("part_drawer_side",{n:i+1}), boxD, boxH, 2, boxMatId, EDGE_ONELONG);
+        push(t("part_drawer_back",{n:i+1}), frontW-36, boxH, 1, boxMatId, EDGE_NONE);
+        push(t("part_drawer_bottom",{n:i+1}), frontW-36, boxD-10, 1, hdf.id, EDGE_NONE);
       }
     });
   }
@@ -845,26 +1252,25 @@ function hingeCountForHeight(doorH){
 
 // Vraća detaljan obračun okova za jedan ormarić (po jedinici, prije množenja sa qty)
 function computeCabinetHardware(cab){
-  const t = matById(cab.material)?.thickness ?? 18;
-  const W = cab.w, H = cab.h, D = cab.d;
-  const items = []; // {name, qty}
-  const add = (name, qty)=>{ if(qty>0) items.push({name, qty}); };
+  const H = cab.h;
+  const items = []; // {key, qty}
+  const add = (key, qty)=>{ if(qty>0) items.push({key, qty}); };
 
   if(cab.type === 'openshelf'){
     const shelfQty = Math.max(1, cab.shelves||1);
-    add("Zidni nosač police", shelfQty*2);
-    add("Tipl + vijak za zid", shelfQty*2*3);
+    add("hw_shelf_bracket", shelfQty*2);
+    add("hw_wall_screw", shelfQty*2*3);
     return items;
   }
 
   if(cab.type === 'hood'){
-    add("Konfirmat vijak (gornjica u bočnice)", 4);
-    add("Konfirmat vijak (prednja/zadnja traka dna)", 8);
-    add("Vijak za bočne nosače dna (fiksiranje)", 6);
-    add("Vijak za fiksiranje nape u korpus", 6);
-    add("Vijak + tipl za montažu elementa na zid", 4);
+    add("hw_hood_top_confirm", 4);
+    add("hw_hood_strip_confirm", 8);
+    add("hw_hood_bracket_screw", 6);
+    add("hw_hood_fix_screw", 6);
+    add("hw_wallmount_screw", 4);
     const backType = cab.backType || 'none';
-    if(backType !== 'none') add("Spajalica za leđa (HDF)", 12);
+    if(backType !== 'none') add("hw_back_staple", 12);
     return items;
   }
 
@@ -874,33 +1280,33 @@ function computeCabinetHardware(cab){
   const doorZoneH = doors>0 ? (totalFrontH - drawerZoneH - (drawers>0?3:0)) : 0;
 
   // Šarke — po vratima, broj zavisi od visine vrata
-  if(doors>0) add("Šarka (kruta/polukruta)", doors * hingeCountForHeight(doorZoneH));
+  if(doors>0) add("hw_hinge", doors * hingeCountForHeight(doorZoneH));
 
   // Klizači za ladice — 1 par (2 kom) po fioci
-  if(drawers>0) add("Klizač za fioku (par = 2 kom)", drawers*2);
+  if(drawers>0) add("hw_slide", drawers*2);
 
   // Ručke — po vratima i fiokama (1 kom svaka)
-  add("Ručka", doors + drawers);
+  add("hw_handle", doors + drawers);
 
   // Konfirmat vijci za spoj korpusa
   let panelJoints = 0; // broj punih panela koji se spajaju na obje bočnice
   if(cab.type === 'base' || cab.type === 'drawers') panelJoints = 3; // dno + 2x pod-gornjica
   else if(cab.type === 'tall' || cab.type === 'wall') panelJoints = 2; // gornjica + dno
-  add("Konfirmat vijak (korpus)", panelJoints*2*2);
+  add("hw_confirm_corpus", panelJoints*2*2);
 
   // Nosači/tiple za police (unutrašnje, ne otvorena polica)
   const shelfQty = Math.max(0, cab.shelves||0);
-  add("Nosač police (tiplica)", shelfQty*4);
+  add("hw_shelf_pin", shelfQty*4);
 
   // HDF spajalice za leđa
   const backType = cab.backType || 'full';
-  if(backType !== 'none') add("Spajalica za leđa (HDF)", 12);
+  if(backType !== 'none') add("hw_back_staple", 12);
 
   // Noge — za podne (donje) elemente
-  if(cab.type==='base' || cab.type==='drawers' || cab.type==='tall') add("Noga (podesiva plastična/metalna)", 4);
+  if(cab.type==='base' || cab.type==='drawers' || cab.type==='tall') add("hw_leg", 4);
 
   // Vijci za montažu visećih elemenata na zid
-  if(cab.type==='wall') add("Vijak + tipl za montažu na zid", 4);
+  if(cab.type==='wall') add("hw_wallmount_screw", 4);
 
   return items;
 }
@@ -910,34 +1316,34 @@ function renderHardware(){
   const allCabs = [];
   state.walls.forEach(w=> w.cabinets.forEach(c=> allCabs.push({cab:c, wallName:w.name})) );
   if(!allCabs.length){
-    body.innerHTML = '<div class="empty-note">Nema elemenata u projektu.</div>';
+    body.innerHTML = `<div class="empty-note">${t("empty_hw")}</div>`;
     return;
   }
 
-  // Ukupni zbroj po nazivu stavke (za sve ormariće, uzimajući u obzir kom.)
+  // Ukupni zbroj po ključu stavke (za sve ormariće, uzimajući u obzir kom.)
   const grand = {};
   const perCabRows = [];
   allCabs.forEach(({cab,wallName})=>{
     const items = computeCabinetHardware(cab);
     items.forEach(it=>{
       const totalQty = it.qty * (cab.qty||1);
-      grand[it.name] = (grand[it.name]||0) + totalQty;
-      perCabRows.push({ wallName, cabName: cab.name, type: TYPE_LABEL[cab.type], name: it.name, unitQty: it.qty, cabQty: cab.qty||1, totalQty });
+      grand[it.key] = (grand[it.key]||0) + totalQty;
+      perCabRows.push({ wallName, cabName: cab.name, type: typeLabel(cab.type), key: it.key, unitQty: it.qty, cabQty: cab.qty||1, totalQty });
     });
   });
 
-  const summaryOrder = ["Šarka (kruta/polukruta)","Konfirmat vijak (korpus)","Klizač za fioku (par = 2 kom)","Noga (podesiva plastična/metalna)","Ručka","Nosač police (tiplica)","Zidni nosač police"];
+  const summaryOrder = ["hw_hinge","hw_confirm_corpus","hw_slide","hw_leg","hw_handle","hw_shelf_pin","hw_shelf_bracket"];
   let summaryHtml = '<div class="hw-summary">';
-  summaryOrder.forEach(name=>{
-    if(grand[name]){
-      summaryHtml += `<div class="hw-card"><div class="hw-num">${grand[name]}</div><div class="hw-lbl">${name}</div></div>`;
+  summaryOrder.forEach(key=>{
+    if(grand[key]){
+      summaryHtml += `<div class="hw-card"><div class="hw-num">${grand[key]}</div><div class="hw-lbl">${t(key)}</div></div>`;
     }
   });
   summaryHtml += '</div>';
 
   let rowsHtml = perCabRows.map((r,i)=>`<tr>
     <td>${i+1}</td>
-    <td class="name">${r.name}</td>
+    <td class="name">${t(r.key)}</td>
     <td>${r.wallName}</td>
     <td>${r.cabName} (${r.type})</td>
     <td>${r.unitQty}</td>
@@ -947,21 +1353,21 @@ function renderHardware(){
 
   body.innerHTML = summaryHtml + `
     <table class="hwtbl">
-      <thead><tr><th>#</th><th>Stavka</th><th>Zid</th><th>Element</th><th>Kom/1 el.</th><th>Broj el.</th><th>Ukupno</th></tr></thead>
+      <thead><tr><th>${t('th_hashtag')}</th><th>${t('th_item')}</th><th>${t('th_wall')}</th><th>${t('th_element')}</th><th>${t('th_qtyper')}</th><th>${t('th_numel')}</th><th>${t('th_total')}</th></tr></thead>
       <tbody>${rowsHtml}</tbody>
     </table>
-    <div class="hint">Okvirne količine na osnovu standardnih pravila struke (npr. 2/3/4 šarke po vratima zavisno od visine, 4 konfirmata po spoju panela). Prilagodi stvarnom sistemu okova koji koristiš.</div>`;
+    <div class="hint">${t('hint_hw')}</div>`;
 }
 
 function exportHardwareCsv(){
   const allCabs = [];
   state.walls.forEach(w=> w.cabinets.forEach(c=> allCabs.push({cab:c, wallName:w.name})) );
-  if(!allCabs.length){ alert("Nema podataka za izvoz."); return; }
-  let csv = "Stavka;Zid;Element;Tip;Kom po elementu;Broj elemenata;Ukupno\n";
+  if(!allCabs.length){ alert(t("alert_nocsv")); return; }
+  let csv = t("csv_hw_header") + "\n";
   allCabs.forEach(({cab,wallName})=>{
     computeCabinetHardware(cab).forEach(it=>{
       const totalQty = it.qty*(cab.qty||1);
-      csv += [it.name,wallName,cab.name,TYPE_LABEL[cab.type],it.qty,cab.qty||1,totalQty].join(";") + "\n";
+      csv += [t(it.key),wallName,cab.name,typeLabel(cab.type),it.qty,cab.qty||1,totalQty].join(";") + "\n";
     });
   });
   downloadBlob(csv, "okov_lista.csv", "text/csv;charset=utf-8");
@@ -978,13 +1384,13 @@ function isoProject(x,y,z){
 // Build a 3D-boxes model of the cabinet for the exploded assembly drawing.
 // Coordinates: x: 0..W (left-right), y: 0..H (bottom-top), z: 0..D (front(0)-back(D))
 function generateAssemblyParts(cab){
-  const t = matById(cab.material)?.thickness ?? 18;
+  const th = matById(cab.material)?.thickness ?? 18;
   const tf = matById(cab.frontMat)?.thickness ?? 18;
   const W = cab.w, H = cab.h, D = cab.d;
   const parts = [];
   let num = 1;
-  const add = (name, axisThin, range, explode, group)=>{
-    parts.push({ id:num++, name, axisThin, range, explode, group });
+  const add = (name, axisThin, range, visible, group)=>{
+    parts.push({ id:num++, name, axisThin, range, visible, group });
   };
 
   // Otvorena viseća polica — samo daske (vidljive, nema korpusa)
@@ -992,7 +1398,7 @@ function generateAssemblyParts(cab){
     const shelfQty = Math.max(1, cab.shelves||1);
     for(let i=0;i<shelfQty;i++){
       const yPos = shelfQty===1 ? H/2 : H * (i/(shelfQty-1));
-      add("Polica "+(i+1), 'y', {x:[0,W], y:[Math.max(0,yPos-9),yPos+9], z:[0,D]}, true, 'shelf');
+      add(t("asm_shelf_n",{n:i+1}), 'y', {x:[0,W], y:[Math.max(0,yPos-9),yPos+9], z:[0,D]}, true, 'shelf');
     }
     return parts;
   }
@@ -1000,43 +1406,43 @@ function generateAssemblyParts(cab){
   // Sklopljen (ne eksplodiran) položaj: z=0 je pozadina (leđa), z=D je prednja strana (vrata/fioke).
   // Vidljivo (iz standardnog izometrijskog ugla): x=max (desna bočnica), y=max (gornja ploča), z=max (prednja strana).
   // Skriveno/iza (crta se isprekidano): x=min (lijeva bočnica), y=min (dno), z=min (leđa), sve unutrašnje police.
-  add("Bočnica (desna)", 'x', {x:[W-t,W], y:[0,H], z:[0,D]}, true, 'side');
-  add("Bočnica (lijeva)", 'x', {x:[0,t], y:[0,H], z:[0,D]}, false, 'side');
+  add(t("asm_side_r"), 'x', {x:[W-th,W], y:[0,H], z:[0,D]}, true, 'side');
+  add(t("asm_side_l"), 'x', {x:[0,th], y:[0,H], z:[0,D]}, false, 'side');
 
   if(cab.type === 'base' || cab.type === 'drawers'){
-    add("Dno", 'y', {x:[t,W-t], y:[0,t], z:[0,D]}, false, 'bottom');
-    add("Pod-gornjica prednja", 'y', {x:[t,W-t], y:[H-t,H], z:[D-100,D]}, true, 'top');
-    add("Pod-gornjica zadnja", 'y', {x:[t,W-t], y:[H-t,H], z:[0,100]}, true, 'top');
+    add(t("asm_bottom"), 'y', {x:[th,W-th], y:[0,th], z:[0,D]}, false, 'bottom');
+    add(t("asm_top_front_rail"), 'y', {x:[th,W-th], y:[H-th,H], z:[D-100,D]}, true, 'top');
+    add(t("asm_top_back_rail"), 'y', {x:[th,W-th], y:[H-th,H], z:[0,100]}, true, 'top');
   } else if(cab.type === 'hood'){
-    add("Gornjica (otvor za cijev)", 'y', {x:[t,W-t], y:[H-t,H], z:[0,D]}, true, 'top');
-    const Wi = W-2*t;
+    add(t("asm_top_hood"), 'y', {x:[th,W-th], y:[H-th,H], z:[0,D]}, true, 'top');
+    const Wi = W-2*th;
     const motorW = Math.max(60, Math.min(cab.hoodMotorW||498, Wi-40));
     const motorD = Math.max(60, Math.min(cab.hoodMotorD||260, D-40));
     const fb = Math.max(20, (D-motorD)/2);
     const sd = Math.max(20, (Wi-motorW)/2);
-    add("Dno - prednja traka", 'y', {x:[t,W-t], y:[0,t], z:[0,fb]}, false, 'bottom');
-    add("Dno - zadnja traka", 'y', {x:[t,W-t], y:[0,t], z:[D-fb,D]}, false, 'bottom');
-    add("Nosač (lijevi)", 'y', {x:[t,t+sd], y:[0,t], z:[fb,D-fb]}, false, 'bottom');
-    add("Nosač (desni)", 'y', {x:[W-t-sd,W-t], y:[0,t], z:[fb,D-fb]}, false, 'bottom');
+    add(t("asm_bottom_front_strip"), 'y', {x:[th,W-th], y:[0,th], z:[0,fb]}, false, 'bottom');
+    add(t("asm_bottom_back_strip"), 'y', {x:[th,W-th], y:[0,th], z:[D-fb,D]}, false, 'bottom');
+    add(t("asm_bracket_l"), 'y', {x:[th,th+sd], y:[0,th], z:[fb,D-fb]}, false, 'bottom');
+    add(t("asm_bracket_r"), 'y', {x:[W-th-sd,W-th], y:[0,th], z:[fb,D-fb]}, false, 'bottom');
   } else {
-    add("Gornjica", 'y', {x:[t,W-t], y:[H-t,H], z:[0,D]}, true, 'top');
-    add("Dno", 'y', {x:[t,W-t], y:[0,t], z:[0,D]}, false, 'bottom');
+    add(t("asm_top"), 'y', {x:[th,W-th], y:[H-th,H], z:[0,D]}, true, 'top');
+    add(t("asm_bottom"), 'y', {x:[th,W-th], y:[0,th], z:[0,D]}, false, 'bottom');
   }
 
   const backType = cab.backType || 'full';
   if(backType !== 'none'){
-    let y0 = t, y1 = H-t;
+    let y0 = th, y1 = H-th;
     if(backType === 'short'){
-      const bgap = Math.max(0, Math.min(H-2*t-20, cab.backGap||0));
-      y0 = t + bgap;
+      const bgap = Math.max(0, Math.min(H-2*th-20, cab.backGap||0));
+      y0 = th + bgap;
     }
-    add(backType==='short' ? "Leđa (skraćena)" : "Leđa (HDF)", 'z', {x:[t,W-t], y:[y0,y1], z:[0,3]}, false, 'back');
+    add(backType==='short' ? t("asm_back_short") : t("asm_back_full"), 'z', {x:[th,W-th], y:[y0,y1], z:[0,3]}, false, 'back');
   }
 
   const shelfN = Math.max(0, cab.shelves||0);
   for(let i=0;i<shelfN;i++){
     const yPos = H * ((i+1)/(shelfN+1));
-    add("Polica "+(i+1), 'y', {x:[t+2,W-t-2], y:[yPos-9,yPos+9], z:[10,D-10]}, false, 'shelf');
+    add(t("asm_shelf_n",{n:i+1}), 'y', {x:[th+2,W-th-2], y:[yPos-9,yPos+9], z:[10,D-10]}, false, 'shelf');
   }
 
   const doors = cab.doors||0, drawers = cab.drawers||0;
@@ -1047,7 +1453,7 @@ function generateAssemblyParts(cab){
     const doorW = (W-4-(doors-1)*gap3)/doors;
     for(let i=0;i<doors;i++){
       const x0 = 2 + i*(doorW+gap3);
-      add("Vrata "+(i+1), 'z', {x:[x0,x0+doorW], y:[2,2+doorZoneH], z:[D,D+tf]}, true, 'front');
+      add(t("asm_door_n",{n:i+1}), 'z', {x:[x0,x0+doorW], y:[2,2+doorZoneH], z:[D,D+tf]}, true, 'front');
     }
   }
   if(drawers>0){
@@ -1056,7 +1462,7 @@ function generateAssemblyParts(cab){
     const frontW = W-4;
     let yCursor = H-2-drawerZoneH;
     heights.forEach((h,i)=>{
-      add("Fioka "+(i+1)+" ("+Math.round(h)+"mm)", 'z', {x:[2,2+frontW], y:[yCursor,yCursor+h], z:[D,D+tf]}, true, 'front');
+      add(t("asm_drawer_n",{n:i+1,h:Math.round(h)}), 'z', {x:[2,2+frontW], y:[yCursor,yCursor+h], z:[D,D+tf]}, true, 'front');
       yCursor += h + gap3;
     });
   }
@@ -1141,31 +1547,31 @@ function assemblySteps(cab){
   const steps = [];
   if(cab.type === 'openshelf'){
     const shelfQty = Math.max(1, cab.shelves||1);
-    steps.push(`Obilježi na zidu ${shelfQty} vodoravn(e/ih) linij(e) razmaknutih po visini elementa i provjeri libelom.`);
-    steps.push(`Učvrsti zidne nosače (2 po polici) u zidne tiple/moždanike.`);
-    steps.push(`Postavi ${shelfQty} dask(u/e) police na nosače i po potrebi fiksiraj odozdo vijkom.`);
+    steps.push(t("step_openshelf_1",{n:shelfQty}));
+    steps.push(t("step_openshelf_2"));
+    steps.push(t("step_openshelf_3",{n:shelfQty}));
     return steps;
   }
   if(cab.type === 'hood'){
-    steps.push(`Spoji obje bočnice sa gornjicom (konfirmat vijci).`);
-    steps.push(`Montiraj prednju i zadnju traku dna, te oba bočna nosača — oni formiraju otvor u dnu kroz koji ulazi motorski (gornji, uži) dio nape, i ujedno su mjesto za njeno pričvršćivanje.`);
-    steps.push(`Izbuši otvor Ø${cab.hoodDuct||120}mm u gornjici za odzračni kanal.`);
-    steps.push(`Montiraj element na zid iznad ploče za kuhanje, na propisanoj visini prema uputstvu proizvođača nape.`);
-    steps.push(`Provuci napu odozdo kroz otvor u dnu — motorski dio ulazi u unutrašnjost elementa i tu je sakriven, a ravni dio sa vizirom ostaje vidljiv ispod elementa.`);
-    steps.push(`Pričvrsti napu vijcima kroz bočne nosače i/ili prednju/zadnju traku dna, prema uputstvu proizvođača.`);
-    steps.push(`Priključi odzračnu cijev (Ø${cab.hoodDuct||120}mm) i provjeri izvlačenje vizira (${cab.hoodPullout||152}mm).`);
+    steps.push(t("step_hood_1"));
+    steps.push(t("step_hood_2"));
+    steps.push(t("step_hood_3",{d:cab.hoodDuct||120}));
+    steps.push(t("step_hood_4"));
+    steps.push(t("step_hood_5"));
+    steps.push(t("step_hood_6"));
+    steps.push(t("step_hood_7",{d:cab.hoodDuct||120,p:cab.hoodPullout||152}));
     return steps;
   }
-  const anchorTop = cab.type==='base' ? "pod-gornjicama" : "gornjicom";
-  steps.push(`Spoji obje bočnice sa dnom i ${anchorTop} (konfirmat vijci + moždanici) — provjeri pravi ugao (dijagonale).`);
+  const anchorTop = cab.type==='base' ? t("anchor_topsupport") : t("anchor_top");
+  steps.push(t("step_generic_1",{anchor:anchorTop}));
   const bt = cab.backType || 'full';
-  if(bt==='full') steps.push("Umetni puna leđa (HDF) u falc sa zadnje strane i pričvrsti spajalicama.");
-  else if(bt==='short') steps.push(`Umetni skraćena leđa (HDF) — ostavljen je razmak od ${cab.backGap||0}mm od dna za instalacije (npr. sifon sudopera).`);
-  else steps.push("Element je bez leđa — radi stabilnosti dodaj dijagonalnu metalnu sponu u gornji ugao.");
-  if((cab.shelves||0)>0) steps.push(`Postavi nosače polica na željenu visinu i umetni ${cab.shelves} polic(u/e).`);
-  if((cab.doors||0)>0) steps.push(`Izbuši i montiraj šarke na vrata (${cab.doors} kom), zatim poravnaj na korpusu.`);
-  if((cab.drawers||0)>0) steps.push(`Montiraj vodilice i tijela fioka (${cab.drawers} kom), pa naknadno fronte fioka.`);
-  if(cab.type==='base' || cab.type==='drawers' || cab.type==='tall') steps.push(`Montiraj noge (4 kom) na dno korpusa i poravnaj visinu.`);
+  if(bt==='full') steps.push(t("step_back_full"));
+  else if(bt==='short') steps.push(t("step_back_short",{g:cab.backGap||0}));
+  else steps.push(t("step_back_none"));
+  if((cab.shelves||0)>0) steps.push(t("step_shelves",{n:cab.shelves}));
+  if((cab.doors||0)>0) steps.push(t("step_doors",{n:cab.doors}));
+  if((cab.drawers||0)>0) steps.push(t("step_drawers",{n:cab.drawers}));
+  if(cab.type==='base' || cab.type==='drawers' || cab.type==='tall') steps.push(t("step_legs"));
   return steps;
 }
 
@@ -1174,12 +1580,10 @@ function renderAssembly(){
   const allCabs = [];
   state.walls.forEach(w=> w.cabinets.forEach(c=> allCabs.push({cab:c, wallName:w.name})) );
   if(!allCabs.length){
-    body.innerHTML = '<div class="empty-note">Nema elemenata u projektu.</div>';
+    body.innerHTML = `<div class="empty-note">${t("empty_assembly")}</div>`;
     return;
   }
-  let html = `<div class="hint" style="margin-bottom:18px;">
-    <b style="color:var(--ink);">▬ Puna linija</b> = vidljivi dio (spolja) &nbsp;&nbsp; <b style="color:var(--ink);">┄ Isprekidana linija</b> = dio sakriven iza (leđa, dno, lijeva bočnica, unutrašnje police) — kao rendgenski/providan prikaz sklopljenog elementa.
-  </div>`;
+  let html = `<div class="hint" style="margin-bottom:18px;">${t("legend_line")}</div>`;
   allCabs.forEach(({cab,wallName})=>{
     const { svg, parts } = renderAssemblySVG(cab, 380);
     const legendRows = parts.map(p=>{
@@ -1191,18 +1595,18 @@ function renderAssembly(){
       const chip = p.visible
         ? `<span class="numchip" style="background:${stroke};">${p.id}</span>`
         : `<span class="numchip" style="background:#fff;color:${stroke};border:1.3px dashed ${stroke};">${p.id}</span>`;
-      return `<tr><td class="num">${chip}</td><td>${p.name}</td><td>${dims}mm</td><td>${p.visible?"vidljivo":"skriveno (iza)"}</td></tr>`;
+      return `<tr><td class="num">${chip}</td><td>${p.name}</td><td>${dims}mm</td><td>${p.visible?t("vis_visible"):t("vis_hidden")}</td></tr>`;
     }).join("");
     const steps = assemblySteps(cab).map((s,i)=>`<div class="step">${i+1}. ${s}</div>`).join("");
     html += `<div class="asm-card">
       <div class="asm-head">
         <b>${cab.name}</b>
-        <span class="meta">${wallName} · ${TYPE_LABEL[cab.type]} · ${cab.w}×${cab.h}×${cab.d}mm · kom: ${cab.qty}</span>
+        <span class="meta">${wallName} · ${typeLabel(cab.type)} · ${cab.w}×${cab.h}×${cab.d}mm · ${t('lbl_qty_abbr')}: ${cab.qty}</span>
       </div>
       <div class="asm-flex">
         <div class="asm-svgbox"><svg width="380" height="380" viewBox="0 0 380 380">${svg}</svg></div>
         <div class="asm-legend">
-          <table class="legendtbl"><thead><tr><th>#</th><th>Dio</th><th>Dimenzije</th><th>Vidljivost</th></tr></thead><tbody>${legendRows}</tbody></table>
+          <table class="legendtbl"><thead><tr><th>${t('th_hashtag')}</th><th>${t('th_part')}</th><th>${t('th_dims')}</th><th>${t('th_vis')}</th></tr></thead><tbody>${legendRows}</tbody></table>
           <div class="asm-steps">${steps}</div>
         </div>
       </div>
@@ -1246,7 +1650,7 @@ function renderCabList(){
   const box = document.getElementById("cabList");
   box.innerHTML = "";
   if(!wall.cabinets.length){
-    box.innerHTML = '<div class="empty-note">Još nema elemenata u ovom zidu.</div>';
+    box.innerHTML = `<div class="empty-note">${t("empty_cablist")}</div>`;
     return;
   }
   wall.cabinets.forEach((c, idx)=>{
@@ -1254,15 +1658,15 @@ function renderCabList(){
     div.className = "cab-item";
     div.innerHTML = `
       <div class="info">
-        <b>${c.name}</b> — ${TYPE_LABEL[c.type]}<br>
-        <span class="d">${c.w}×${c.h}×${c.d}mm · v:${c.doors} f:${c.drawers} · kom:${c.qty}</span>
+        <b>${c.name}</b> — ${typeLabel(c.type)}<br>
+        <span class="d">${c.w}×${c.h}×${c.d}mm · ${t("cab_meta",{doors:c.doors,drawers:c.drawers,qty:c.qty})}</span>
       </div>
       <div class="acts">
-        <button class="tiny" data-act="up" title="Pomjeri lijevo">↑</button>
-        <button class="tiny" data-act="down" title="Pomjeri desno">↓</button>
-        <button class="tiny edit" data-act="edit" title="Uredi">✎</button>
-        <button class="tiny" data-act="dup" title="Dupliraj">⎘</button>
-        <button class="tiny" data-act="del" title="Obriši">✕</button>
+        <button class="tiny" data-act="up" title="${t('act_moveleft')}">↑</button>
+        <button class="tiny" data-act="down" title="${t('act_moveright')}">↓</button>
+        <button class="tiny edit" data-act="edit" title="${t('act_edit')}">✎</button>
+        <button class="tiny" data-act="dup" title="${t('act_dup')}">⎘</button>
+        <button class="tiny" data-act="del" title="${t('act_del')}">✕</button>
       </div>`;
     div.querySelectorAll("button").forEach(btn=>{
       btn.onclick = ()=>{
@@ -1314,12 +1718,12 @@ function renderLayout(){
   document.getElementById("layoutWallName").textContent = wall.name;
   const totalW = wall.cabinets.reduce((s,c)=>s+c.w*c.qty,0);
   document.getElementById("layoutWallMeta").textContent =
-    wall.cabinets.length ? `Ukupna širina zida: ${totalW} mm  ·  ${wall.cabinets.length} tip(ova) elemenata` : "Nema elemenata";
+    wall.cabinets.length ? t("layout_meta",{w:totalW,n:wall.cabinets.length}) : t("layout_meta_empty");
 
   const row = document.getElementById("floorRow");
   row.innerHTML = "";
   if(!wall.cabinets.length){
-    row.innerHTML = '<div class="empty-note">Dodaj elemente iz lijevog panela da vidiš raspored.</div>';
+    row.innerHTML = `<div class="empty-note">${t("empty_layout")}</div>`;
     return;
   }
   const scale = Math.min(0.28, 900/Math.max(totalW,1));
@@ -1329,7 +1733,7 @@ function renderLayout(){
       el.className = "cabblock" + (c.type==="wall" ? " wall-type":"");
       el.style.width = Math.max(20, c.w*scale) + "px";
       el.style.height = Math.max(40, c.h*scale*0.55) + "px";
-      el.innerHTML = `<div class="dim-top">${c.w}</div>
+      el.innerHTML = `<div class="dim-top">${t('dim_w_abbr')}: ${c.w} <span class="dim-depth">${t('dim_d_abbr')}: ${c.d}</span></div>
         <div class="doorlines">${Array.from({length:Math.max(1,c.doors+c.drawers)}).map(()=>"<div></div>").join("")}</div>
         <div class="lbl">${c.name}</div>`;
       row.appendChild(el);
@@ -1342,7 +1746,7 @@ function renderCutlist(){
   const panels = allPanels();
   const body = document.getElementById("cutlistBody");
   if(!panels.length){
-    body.innerHTML = '<div class="empty-note">Nema elemenata u projektu — dodaj ormariće u tabu "Raspored".</div>';
+    body.innerHTML = `<div class="empty-note">${t("empty_cutlist")}</div>`;
     return;
   }
   const byMat = {};
@@ -1354,7 +1758,7 @@ function renderCutlist(){
   let html = "";
   let grandArea = 0, grandCount = 0;
   Object.keys(byMat).forEach(mid=>{
-    const mat = matById(mid) || {name:"Nepoznat materijal"};
+    const mat = matById(mid) || {name:t("unknown_material")};
     const rows = byMat[mid];
     let areaSum = 0, countSum = 0;
     let trs = rows.map((p,i)=>{
@@ -1377,24 +1781,24 @@ function renderCutlist(){
       <div class="mat-group">
         <div class="mat-head">
           <div class="mname">${mat.name}</div>
-          <div class="msum">${countSum} kom · ${areaSum.toFixed(2)} m²</div>
+          <div class="msum">${countSum} ${t('lbl_qty_abbr')} · ${areaSum.toFixed(2)} m²</div>
         </div>
         <table class="cutlist">
           <thead><tr>
-            <th>#</th><th>Naziv panela</th><th>Ormarić</th><th>Dužina (mm)</th><th>Širina (mm)</th><th>Kom</th><th>Ivica</th><th>m²</th>
+            <th>${t('th_num')}</th><th>${t('th_panelname')}</th><th>${t('th_cabinet')}</th><th>${t('th_length')}</th><th>${t('th_width2')}</th><th>${t('th_qty')}</th><th>${t('th_edge')}</th><th>${t('th_area')}</th>
           </tr></thead>
           <tbody>${trs}</tbody>
         </table>
       </div>`;
   });
-  html += `<div class="hint" style="margin-top:-10px;">UKUPNO: ${grandCount} panela · ${grandArea.toFixed(2)} m² (bruto, bez optimizacije rezanja)</div>`;
+  html += `<div class="hint" style="margin-top:-10px;">${t("total_line",{n:grandCount,a:grandArea.toFixed(2)})}</div>`;
   body.innerHTML = html;
 }
 
 function exportCsv(){
   const panels = allPanels();
-  if(!panels.length){ alert("Nema podataka za izvoz."); return; }
-  let csv = "Materijal;Naziv panela;Ormaric;Duzina(mm);Sirina(mm);Kom;Ivica\n";
+  if(!panels.length){ alert(t("alert_nocsv")); return; }
+  let csv = t("csv_cutlist_header") + "\n";
   panels.forEach(p=>{
     const mat = matById(p.materialId)?.name || "";
     csv += [mat,p.name,p.cabinetName,p.w,p.h,p.qty,p.edge].join(";") + "\n";
@@ -1404,89 +1808,91 @@ function exportCsv(){
 }
 
 /* ================= NESTING (optimizacija reza) ================= */
-// Simple shelf-based bin packing (Shelf Best Height Fit), supports rotation unless grain=true
+// Guillotine Best-Area-Fit bin packing: za svaki komad se traži slobodni pravougaonik
+// na ploči koji ostavlja najmanje neiskorišćenog prostora, zatim se taj pravougaonik
+// giljotinski (ravnim rezom cijelom dužinom) dijeli na dva nova slobodna pravougaonika.
+// Ovo daje znatno bolje iskorištenje ploče od jednostavnog "shelf" slaganja u redove.
 function nestMaterial(mat, panelList, kerf, trim){
-  // Expand qty into individual pieces
   let pieces = [];
   panelList.forEach(p=>{
     for(let i=0;i<p.qty;i++){
       pieces.push({ name:p.name, cabinetName:p.cabinetName, w:p.w, h:p.h });
     }
   });
-  // sort descending by height (long side first for shelf efficiency)
-  pieces.sort((a,b)=> Math.max(b.w,b.h) - Math.max(a.w,a.h));
+  // veći komadi prvo (po površini) — daje bolje rezultate za best-area-fit
+  pieces.sort((a,b)=> (b.w*b.h) - (a.w*a.h));
 
   const usableW = mat.sheetW - 2*trim;
   const usableH = mat.sheetH - 2*trim;
 
-  let sheets = [];
-  let sheet = newSheet();
+  const sheets = [];
   function newSheet(){
-    const s = { shelves:[], usedArea:0 };
+    const s = { freeRects: [{x:0,y:0,w:usableW,h:usableH}], placed: [] };
     sheets.push(s);
     return s;
   }
-  function tryPlaceOnSheet(s, piece){
-    // try existing shelves
-    for(const sh of s.shelves){
-      // orientation 1: as-is
-      if(piece.w <= sh.remainingW && piece.h <= sh.h){
-        placeInShelf(sh, piece, piece.w, piece.h);
-        return true;
+  let sheet = newSheet();
+
+  function findBestFit(s, piece){
+    let best = null;
+    s.freeRects.forEach((fr, idx)=>{
+      if(piece.w <= fr.w + 1e-6 && piece.h <= fr.h + 1e-6){
+        const leftover = fr.w*fr.h - piece.w*piece.h;
+        if(!best || leftover < best.leftover) best = { idx, w:piece.w, h:piece.h, rotated:false, leftover };
       }
-      // orientation 2: rotated
-      if(!mat.grain && piece.h <= sh.remainingW && piece.w <= sh.h){
-        placeInShelf(sh, piece, piece.h, piece.w, true);
-        return true;
+      if(!mat.grain && piece.h <= fr.w + 1e-6 && piece.w <= fr.h + 1e-6){
+        const leftover = fr.w*fr.h - piece.w*piece.h;
+        if(!best || leftover < best.leftover) best = { idx, w:piece.h, h:piece.w, rotated:true, leftover };
       }
-    }
-    // new shelf
-    const usedH = s.shelves.reduce((sum,sh)=>sum+sh.h+kerf,0);
-    const remH = usableH - usedH;
-    // orientation 1
-    if(piece.h <= remH && piece.w <= usableW){
-      const sh = { y:usedH, h:piece.h, remainingW:usableW, items:[] };
-      s.shelves.push(sh);
-      placeInShelf(sh, piece, piece.w, piece.h);
-      return true;
-    }
-    // orientation 2 rotated
-    if(!mat.grain && piece.w <= remH && piece.h <= usableW){
-      const sh = { y:usedH, h:piece.w, remainingW:usableW, items:[] };
-      s.shelves.push(sh);
-      placeInShelf(sh, piece, piece.h, piece.w, true);
-      return true;
-    }
-    return false;
-  }
-  function placeInShelf(sh, piece, w, h, rotated){
-    const x = usableW - sh.remainingW;
-    sh.items.push({ x, y:sh.y, w, h, name:piece.name, cabinetName:piece.cabinetName, rotated:!!rotated });
-    sh.remainingW -= (w + kerf);
+    });
+    return best;
   }
 
-  pieces.forEach(p=>{
-    if(p.w > usableW && p.h > usableW && p.w > usableH && p.h > usableH){
-      // doesn't fit at all in either orientation — skip with warning flag
-      p._toobig = true;
-      return;
+  // Giljotinski razrez slobodnog pravougaonika nakon smještanja komada (usedW × usedH u gornjem lijevom uglu)
+  function splitFreeRect(fr, usedW, usedH){
+    const rects = [];
+    const remW = fr.w - usedW - kerf;
+    const remH = fr.h - usedH - kerf;
+    // reži po kraćoj preostaloj osi (daje "kvadratnije", korisnije ostatke)
+    if(remW <= remH){
+      if(remW > 0) rects.push({x: fr.x+usedW+kerf, y: fr.y, w: remW, h: fr.h});
+      if(remH > 0) rects.push({x: fr.x, y: fr.y+usedH+kerf, w: usedW, h: remH});
+    } else {
+      if(remH > 0) rects.push({x: fr.x, y: fr.y+usedH+kerf, w: fr.w, h: remH});
+      if(remW > 0) rects.push({x: fr.x+usedW+kerf, y: fr.y, w: remW, h: usedH});
     }
-    let placed = tryPlaceOnSheet(sheet, p);
+    return rects;
+  }
+
+  function placePiece(s, piece){
+    const best = findBestFit(s, piece);
+    if(!best) return false;
+    const fr = s.freeRects[best.idx];
+    s.placed.push({ x: fr.x, y: fr.y, w: best.w, h: best.h, name: piece.name, cabinetName: piece.cabinetName, rotated: best.rotated });
+    const newRects = splitFreeRect(fr, best.w, best.h);
+    s.freeRects.splice(best.idx, 1);
+    newRects.forEach(r=>{ if(r.w>2 && r.h>2) s.freeRects.push(r); });
+    return true;
+  }
+
+  const tooBig = [];
+  pieces.forEach(p=>{
+    const fitsAtAll = (p.w<=usableW && p.h<=usableH) || (!mat.grain && p.h<=usableW && p.w<=usableH);
+    if(!fitsAtAll){ tooBig.push(p); return; }
+    let placed = placePiece(sheet, p);
     if(!placed){
       sheet = newSheet();
-      placed = tryPlaceOnSheet(sheet, p);
+      placed = placePiece(sheet, p);
     }
-    if(!placed){ p._toobig = true; }
+    if(!placed) tooBig.push(p);
   });
 
-  // compute utilization
   const results = sheets.map(s=>{
     let used = 0;
-    s.shelves.forEach(sh=>sh.items.forEach(it=> used += it.w*it.h));
+    s.placed.forEach(it=> used += it.w*it.h);
     const total = mat.sheetW*mat.sheetH;
-    return { shelves:s.shelves, utilization: used/total };
+    return { placed: s.placed, utilization: used/total };
   });
-  const tooBig = pieces.filter(p=>p._toobig);
   return { sheets: results, tooBig };
 }
 
@@ -1495,7 +1901,7 @@ function renderNesting(){
   const kerf = state.settings.kerf, trim = state.settings.trim;
   const panels = allPanels();
   if(!panels.length){
-    body.innerHTML = '<div class="empty-note">Nema elemenata u projektu.</div>';
+    body.innerHTML = `<div class="empty-note">${t("empty_nesting")}</div>`;
     return;
   }
   const byMat = {};
@@ -1512,8 +1918,8 @@ function renderNesting(){
     html += `<div class="sheet-wrap">
       <div class="sheet-info">
         <b>${mat.name}</b>
-        <span class="hint">Format ploče: ${mat.sheetW}×${mat.sheetH}mm · ${mat.grain?"sa smjerom teksture (bez rotacije)":"bez smjera teksture (rotacija dozvoljena)"}</span>
-        <span class="util-badge" style="background:${utilColor}">${sheets.length} ploča · prosj. iskorištenost ${(avgUtil*100).toFixed(0)}%</span>
+        <span class="hint">${t("sheet_format",{w:mat.sheetW,h:mat.sheetH})} ${mat.grain?t("grain_yes"):t("grain_no")}</span>
+        <span class="util-badge" style="background:${utilColor}">${t("util_badge",{n:sheets.length,p:(avgUtil*100).toFixed(0)})}</span>
       </div>
       <div class="sheets-row">`;
 
@@ -1524,20 +1930,18 @@ function renderNesting(){
       let rects = "";
       let colorIdx = 0;
       const palette = ["#EFF3F6","#F6F0E8","#EDEFE2","#F3E9EC","#E9F0EF","#F0EEE8"];
-      s.shelves.forEach(sh=>{
-        sh.items.forEach(it=>{
-          const rx = (trim + it.x)*scale, ry = (trim + sh.y)*scale;
-          const rw = it.w*scale, rh = it.h*scale;
-          rects += `<rect x="${rx}" y="${ry}" width="${rw}" height="${rh}" fill="${palette[colorIdx%palette.length]}" stroke="#2B4C6F" stroke-width="1"/>`;
-          if(rw>34 && rh>14){
-            rects += `<text x="${rx+rw/2}" y="${ry+rh/2-3}" font-size="8" text-anchor="middle" font-family="monospace" fill="#211D18">${it.name}${it.rotated?" ↻":""}</text>`;
-            rects += `<text x="${rx+rw/2}" y="${ry+rh/2+8}" font-size="7.5" text-anchor="middle" font-family="monospace" fill="#57524A">${it.w}×${it.h}</text>`;
-          }
-          colorIdx++;
-        });
+      s.placed.forEach(it=>{
+        const rx = (trim + it.x)*scale, ry = (trim + it.y)*scale;
+        const rw = it.w*scale, rh = it.h*scale;
+        rects += `<rect x="${rx}" y="${ry}" width="${rw}" height="${rh}" fill="${palette[colorIdx%palette.length]}" stroke="#2B4C6F" stroke-width="1"/>`;
+        if(rw>34 && rh>14){
+          rects += `<text x="${rx+rw/2}" y="${ry+rh/2-3}" font-size="8" text-anchor="middle" font-family="monospace" fill="#211D18">${it.name}${it.rotated?" ↻":""}</text>`;
+          rects += `<text x="${rx+rw/2}" y="${ry+rh/2+8}" font-size="7.5" text-anchor="middle" font-family="monospace" fill="#57524A">${it.w}×${it.h}</text>`;
+        }
+        colorIdx++;
       });
       html += `<div class="sheet-svg-box">
-        <div class="stitle">PLOČA ${si+1} — iskorištenost ${(s.utilization*100).toFixed(0)}%</div>
+        <div class="stitle">${t("sheet_title",{n:si+1,p:(s.utilization*100).toFixed(0)})}</div>
         <svg width="${pxW}" height="${pxH}" viewBox="0 0 ${pxW} ${pxH}" style="background:#fff;">
           <rect x="0" y="0" width="${pxW}" height="${pxH}" fill="#fff" stroke="#BDB6A4"/>
           ${rects}
@@ -1546,7 +1950,7 @@ function renderNesting(){
     });
     html += `</div>`;
     if(tooBig.length){
-      html += `<div class="hint" style="color:var(--red);">⚠ ${tooBig.length} panel(a) ne staje ni u jednu orijentaciju na odabrani format ploče: ${tooBig.map(p=>p.name).join(", ")}</div>`;
+      html += `<div class="hint" style="color:var(--red);">${t("warn_toobig",{n:tooBig.length,list:tooBig.map(p=>p.name).join(", ")})}</div>`;
     }
     html += `</div>`;
   });
@@ -1557,7 +1961,7 @@ function renderNesting(){
 function renderMaterials(){
   const tbl = document.getElementById("matTable");
   let html = `<thead><tr>
-    <th>Naziv</th><th>Debljina(mm)</th><th>Format ploče Š×V(mm)</th><th>Smjer teksture</th><th></th>
+    <th>${t('th_matname')}</th><th>${t('th_thickness')}</th><th>${t('th_sheetformat')}</th><th>${t('th_grain')}</th><th></th>
   </tr></thead><tbody>`;
   state.materials.forEach(m=>{
     html += `<tr data-id="${m.id}">
@@ -1588,7 +1992,7 @@ function renderMaterials(){
       };
     });
     tr.querySelector('[data-act="delmat"]').onclick = ()=>{
-      if(!confirm("Obrisati materijal? Paneli koji ga koriste ostat će s nepostojećim ID-om.")) return;
+      if(!confirm(t("confirm_delmat"))) return;
       state.materials = state.materials.filter(m=>m.id!==id);
       persist(); renderAll();
     };
@@ -1668,8 +2072,8 @@ function renderDrawerHeightInputs(count, values){
     const val = (values && values[i]!=null) ? values[i] : 0;
     const row = document.createElement("div");
     row.style.cssText = "display:flex;align-items:center;gap:6px;margin-bottom:5px;";
-    row.innerHTML = `<span style="font-family:var(--mono);font-size:11px;color:var(--ink-soft);width:52px;flex-shrink:0;">Fioka ${i+1}</span>
-      <input type="number" class="drawerHInput" data-idx="${i}" value="${val}" placeholder="0 = ostatak">`;
+    row.innerHTML = `<span style="font-family:var(--mono);font-size:11px;color:var(--ink-soft);width:52px;flex-shrink:0;">${t("drawer_n",{n:i+1})}</span>
+      <input type="number" class="drawerHInput" data-idx="${i}" value="${val}" placeholder="${t('drawer_ph')}">`;
     list.appendChild(row);
   }
 }
@@ -1721,7 +2125,7 @@ document.getElementById("btnAddCab").addEventListener("click", ()=>{
 });
 
 document.getElementById("btnAddWall").addEventListener("click", ()=>{
-  const name = prompt("Naziv novog zida:", "Zid " + (state.walls.length+1));
+  const name = prompt(t("prompt_newwall"), t("prompt_wallname_prefix") + (state.walls.length+1));
   if(!name) return;
   const w = { id: nextId("w"), name, cabinets: [] };
   state.walls.push(w);
@@ -1730,13 +2134,13 @@ document.getElementById("btnAddWall").addEventListener("click", ()=>{
 });
 document.getElementById("btnRenWall").addEventListener("click", ()=>{
   const wall = currentWall();
-  const name = prompt("Novi naziv zida:", wall.name);
+  const name = prompt(t("prompt_renwall"), wall.name);
   if(!name) return;
   wall.name = name; persist(); renderAll();
 });
 document.getElementById("btnDelWall").addEventListener("click", ()=>{
-  if(state.walls.length<=1){ alert("Mora postojati bar jedan zid."); return; }
-  if(!confirm("Obrisati zid i sve elemente u njemu?")) return;
+  if(state.walls.length<=1){ alert(t("alert_onewall")); return; }
+  if(!confirm(t("confirm_delwall"))) return;
   state.walls = state.walls.filter(w=>w.id!==state.activeWall);
   state.activeWall = state.walls[0].id;
   persist(); renderAll();
@@ -1773,7 +2177,7 @@ document.getElementById("btnSaveSettings").addEventListener("click", ()=>{
   state.settings.kerf = Number(document.getElementById("s_kerf").value);
   state.settings.trim = Number(document.getElementById("s_trim").value);
   persist();
-  alert("Postavke sačuvane.");
+  alert(t("alert_settingssaved"));
 });
 
 document.getElementById("btnSave").addEventListener("click", ()=>{
@@ -1789,13 +2193,17 @@ document.getElementById("fileLoad").addEventListener("change", (e)=>{
       const parsed = JSON.parse(reader.result);
       state = parsed;
       persist(); renderAll();
-      alert("Projekat učitan.");
-    }catch(err){ alert("Greška pri učitavanju fajla."); }
+      alert(t("alert_loaded"));
+    }catch(err){ alert(t("alert_loaderr")); }
   };
   reader.readAsText(file);
 });
+document.getElementById("btnLang").addEventListener("click", ()=>{
+  setLang(LANG === "bs" ? "en" : "bs");
+});
+
 document.getElementById("btnReset").addEventListener("click", ()=>{
-  if(!confirm("Ovo briše trenutni projekat iz browsera. Nastaviti?")) return;
+  if(!confirm(t("confirm_reset"))) return;
   state = defaultState();
   persist(); renderAll();
 });
@@ -1807,7 +2215,6 @@ document.querySelectorAll(".tab").forEach(tab=>{
     tab.classList.add("active");
     document.getElementById("tab-"+tab.dataset.tab).classList.add("active");
     if(tab.dataset.tab==="cutlist") renderCutlist();
-    if(tab.dataset.tab==="nesting") renderNesting();
     if(tab.dataset.tab==="assembly") renderAssembly();
     if(tab.dataset.tab==="hardware") renderHardware();
     if(tab.dataset.tab==="stats") renderStats();
@@ -1830,6 +2237,7 @@ function renderAll(){
 }
 renderAll();
 toggleTypeFields();
+applyStaticI18n();
 
 })();
 </script>
